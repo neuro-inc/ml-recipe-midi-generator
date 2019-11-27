@@ -3,28 +3,37 @@
 # Description
 
 This project is created from 
-[Neuro Platform Project Template](https://github.com/neuromation/cookiecutter-neuro-project).
-
-# Development Environment
-
-This project is designed to run on [Neuro Platform](https://neu.ro), so you can jump into problem-solving right away.
+[Neuro Platform Project Template](https://github.com/neuromation/cookiecutter-neuro-project) and
+ designed to run on [Neuro Platform](https://neu.ro), so you can jump into problem-solving right away.
 
 ## Directory structure
 
 | Local directory                      | Description       | Storage URI                                                                  | Environment mounting point |
 |:------------------------------------ |:----------------- |:---------------------------------------------------------------------------- |:-------------------------- | 
 | `data/`                              | Data              | `storage:midi-generator/data/`                              | `/midi-generator/data/` | 
-| `code/` | Python modules    | `storage:midi-generator/code/` | `/midi-generator/code/` |
+| `midi-generator/` | Directory with code    | `storage:midi-generator/midi-generator/` | `/midi-generator/cmidi-generator/` |
 | `notebooks/`                         | Jupyter notebooks | `storage:midi-generator/notebooks/`                         | `/midi-generator/notebooks/` |
-| No directory                         | Logs and results  | `storage:midi-generator/results/`                           | `/midi-generator/results/` |
+| `results/`                         | Logs and results  | `storage:midi-generator/results/`                           | `/midi-generator/results/` |
 
-## Development
+## How to train your own model or run existed
 
-Follow the instructions below to set up the environment and start Jupyter development session.
+Follow the instructions below to set up the environment and start development session.
+
+### Log in neuro platform
+
+Before environment setup it's required to login on platform:
+
+`neuro login`
+
+It can be done with github account.
 
 ### Setup development environment 
-
+The first thing you need to do is specify environment on `neuro` platform. To do it run this command in the project root
+directory:
+   
 `make setup`
+
+What happens during this command:
 
 * Several files from the local project are uploaded to the platform storage (namely, `requirements.txt`, 
   `apt.txt`, `setup.cfg`).
@@ -32,7 +41,12 @@ Follow the instructions below to set up the environment and start Jupyter develo
 * Pip requirements from `requirements.txt` and apt applications from `apt.txt` are installed in this environment.
 * The updated environment is saved under a new project-dependent name and is used further on.
 
-### Run Jupyter with GPU 
+After that, the image with the name `neuromation-midi-generator` will be created. To see a list of images 
+the followed command can be used:
+
+`neuro image ls`
+
+<!--- ### Run Jupyter with GPU 
 
 `make jupyter`
 
@@ -45,57 +59,55 @@ Follow the instructions below to set up the environment and start Jupyter develo
 
 * The job with Jupyter Notebooks is terminated. The notebooks are saved on the platform storage. You may run 
   `make download-notebooks` to download them to the local `notebooks/` directory.
+--->
 
-### Help
+### Resources uploading \ downloading
 
-`make help`
+Alter develop environment is setup, the next step is upload the repository resources on platform with:
 
-## Data
+`make upload`
 
-### Uploading via Web UI
+This command will upload all repository directories on platform. To specify what you exactly want 
+to upload:
 
-On local machine run `make filebrowser` and open job's URL on your mobile device or desktop.
-Through a simple file explorer interface, you can upload test images and perform file operations.
+| Command                      | Uploaded directory       | 
+|:---------------------------- |:-------------------------| 
+| `make upload-code`           | `midi-generator`         | 
+| `make upload-data`           | `data`                   |
+| `make upload-notebooks`      | `notebooks`              | 
+| `make upload-results`        | `results`                | 
 
-### Uploading via CLI
+**WARNING:** After each local code modification, you need to upload code on the platform to have 
+updated code there.
 
-On local machine run `make upload-data`. This command pushes local files stored in `./data`
-into `storage:midi-generator/data` mounted to your development environment's `/project/data`.
+Resources also can be downloaded with `make download*` command.
 
-## Customization
+### Generate a new MIDI file
 
-Several variables in `Makefile` are intended to be modified according to the project specifics. 
-To change them, find the corresponding line in `Makefile` and update.
+To generate a new midi file you can generation job on platform:
 
-### Data location
+`make generate`
 
-`DATA_DIR_STORAGE?=$(PROJECT_PATH_STORAGE)/$(DATA_DIR)`
+After the command is executed download result file from the platform `make download-results`. 
+The result can be opened with `timidity`. To setup generation parameters modify `generate_config.cfg` file, 
+but do not forget to upload it on the platform after modification. 
 
-This project template implies that your data is stored alongside the project. If this is the case, you don't 
-have to change this variable. However, if your data is shared between several projects on the platform, 
-you need to change the following line to point to its location. For example:
+### Model training
 
-`DATA_DIR_STORAGE?=storage:datasets/cifar10`
+You also can train your own model. To do it use the following command:
 
-### Training machine type
+`make training`
 
-`TRAINING_MACHINE_TYPE?=gpu-small`
+To specify model and training parameters modify `train_config.cfg` file.
 
-There are several machine types supported on the platform. Run `neuro config show` to see the list.
+### Developing mode
 
-### HTTP authentication
+Remote terminal can be run to execute code manually:
 
-`HTTP_AUTH?=--http-auth`
+`make developing && connect-developing`
 
-When jobs with HTTP interface are executed (for example, with Jupyter Notebooks or TensorBoard), this interface requires
-a user to be authenticated on the platform. However, if you want to share the link with someone who is not registered on
-the platform, you may disable the authentication updating this line to `HTTP_AUTH?=--no-http-auth`.
+All modified code can be downloaded on a local machine with `make download` command.
 
-### Training command
+### Customization
 
-`TRAINING_COMMAND?='echo "Replace this placeholder with a training script execution"'`
-
-If you want to train some models from code instead of Jupyter Notebooks, you need to update this line. For example:
-
-`TRAINING_COMMAND="bash -c 'cd $(PROJECT_PATH_ENV) && python -u $(CODE_DIR)/train.py --data $(DATA_DIR)'"`
-
+To modify listed above commands or clarify what they do, see `Makefile`. 

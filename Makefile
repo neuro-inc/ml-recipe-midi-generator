@@ -177,8 +177,9 @@ developing:
 		--env EXPOSE_SSH=yes \
 		--http 8888 \
 		--no-http-auth \
-	    --detach \
-		$(CUSTOM_ENV_NAME)
+		--detach \
+		$(CUSTOM_ENV_NAME) \
+		'bash'
 
 .PHONY: kill-developing
 kill-developing:
