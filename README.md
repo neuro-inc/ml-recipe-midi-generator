@@ -46,21 +46,6 @@ the followed command can be used:
 
 `neuro image ls`
 
-<!--- ### Run Jupyter with GPU 
-
-`make jupyter`
-
-* The content of `code` and `notebooks` directories is uploaded to the platform storage.
-* A job with Jupyter is started, and its web interface is opened in the local web browser window.
-
-### Kill Jupyter
-
-`make kill-jupyter`
-
-* The job with Jupyter Notebooks is terminated. The notebooks are saved on the platform storage. You may run 
-  `make download-notebooks` to download them to the local `notebooks/` directory.
---->
-
 ### Resources uploading \ downloading
 
 Alter develop environment is setup, the next step is upload the repository resources on platform with:
@@ -107,6 +92,20 @@ Remote terminal can be run to execute code manually:
 `make developing && connect-developing`
 
 All modified code can be downloaded on a local machine with `make download` command.
+
+### Run Jupyter with GPU 
+
+`make jupyter`
+
+* The content of `code` and `notebooks` directories is uploaded to the platform storage.
+* A job with Jupyter is started, and its web interface is opened in the local web browser window.
+
+### Kill Jupyter
+
+`make kill-jupyter`
+
+* The job with Jupyter Notebooks is terminated. The notebooks are saved on the platform storage. You may run 
+  `make download-notebooks` to download them to the local `notebooks/` directory.
 
 ### Customization
 
