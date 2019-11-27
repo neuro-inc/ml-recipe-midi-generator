@@ -2,12 +2,12 @@ import logging
 
 import configargparse
 import torch
-from music21 import stream
 
 from model.dataset import MidiDataset, Vocab
 from utils.generate_midi import generate_midi
 from utils.load_model import load_model
 from utils.seed import set_seed
+from utils.write_notes import write_notes
 
 
 def get_parser() -> configargparse.ArgumentParser:
@@ -32,11 +32,6 @@ def get_parser() -> configargparse.ArgumentParser:
     return parser
 
 
-def write_midi(out_file, notes):
-    midi_stream = stream.Stream(notes)
-    midi_stream.write('midi', fp=out_file)
-
-
 def main():
     params = get_parser().parse_args()
     if params.seed is not None:
@@ -54,7 +49,7 @@ def main():
     note_seq = vocab.decode(note_seq)
     notes = MidiDataset.decode_notes(note_seq, offset_seq)
 
-    write_midi(params.out, notes)
+    write_notes(params.out, notes)
 
     logger.info(f'Result was saved to {params.out}.')
 
