@@ -1,7 +1,7 @@
 ##### PATHS #####
 
 DATA_DIR?=data
-CODE_DIR?=code
+CODE_DIR?=midi-generator
 NOTEBOOKS_DIR?=notebooks
 RESULTS_DIR?=results
 
@@ -17,6 +17,8 @@ PROJECT_POSTFIX?=midi-generator
 
 SETUP_JOB?=setup-$(PROJECT_POSTFIX)
 TRAINING_JOB?=training-$(PROJECT_POSTFIX)
+GENERATE_JOB?=generate-$(PROJECT_POSTFIX)
+DEVELOPING_JOB?=developing-$(PROJECT_POSTFIX)
 JUPYTER_JOB?=jupyter-$(PROJECT_POSTFIX)
 TENSORBOARD_JOB?=tensorboard-$(PROJECT_POSTFIX)
 FILEBROWSER_JOB?=filebrowser-$(PROJECT_POSTFIX)
@@ -39,8 +41,8 @@ TRAINING_MACHINE_TYPE?=gpu-small
 # WARNING: removing authentication might disclose your sensitive data stored in the job.
 HTTP_AUTH?=--http-auth
 # Command to run training inside the environment. Example:
-# TRAINING_COMMAND="bash -c 'cd $(PROJECT_PATH_ENV) && python -u $(CODE_DIR)/train.py --data $(DATA_DIR)'"
-TRAINING_COMMAND?='echo "Replace this placeholder with a training script execution"'
+TRAINING_COMMAND="bash -c 'cd $(PROJECT_PATH_ENV) && python -u $(CODE_DIR)/train.py -c $(CODE_DIR)/configs/train_config.cfg'"
+GENERATE_COMMAND="bash -c 'cd $(PROJECT_PATH_ENV) && python -u $(CODE_DIR)/generate.py -c $(CODE_DIR)/configs/generate_config.cfg'"
 
 ##### COMMANDS #####
 
@@ -108,6 +110,14 @@ download-notebooks:  ### Download notebooks directory from the platform storage
 clean-notebooks:  ### Delete notebooks directory from the platform storage
 	$(NEURO) rm --recursive $(PROJECT_PATH_STORAGE)/$(NOTEBOOKS_DIR)/*
 
+.PHONY: upload-results
+upload-results:  ### Upload code directory to the platform storage
+	$(NEURO) cp --recursive --update --no-target-directory $(RESULTS_DIR) $(PROJECT_PATH_STORAGE)/$(RESULTS_DIR)
+
+.PHONY: download-results
+download-results:  ### Download notebooks directory from the platform storage
+	$(NEURO) cp --recursive --update --no-target-directory $(PROJECT_PATH_STORAGE)/$(RESULTS_DIR) $(RESULTS_DIR)
+
 .PHONY: upload  ### Upload code, data, and notebooks directories to the platform storage
 upload: upload-code upload-data upload-notebooks
 
@@ -135,6 +145,48 @@ kill-training:  ### Terminate the training job
 .PHONY: connect-training
 connect-training:  ### Connect to the remote shell running on the training job
 	$(NEURO) exec --no-tty --no-key-check $(TRAINING_JOB) bash
+
+.PHONY: generate
+generate:  ### Run a generate job
+	$(NEURO) run \
+		--name $(GENERATE_JOB) \
+		--preset $(TRAINING_MACHINE_TYPE) \
+		--volume $(DATA_DIR_STORAGE):$(PROJECT_PATH_ENV)/$(DATA_DIR):ro \
+		--volume $(PROJECT_PATH_STORAGE)/$(CODE_DIR):$(PROJECT_PATH_ENV)/$(CODE_DIR):ro \
+		--volume $(PROJECT_PATH_STORAGE)/$(RESULTS_DIR):$(PROJECT_PATH_ENV)/$(RESULTS_DIR):rw \
+		--env EXPOSE_SSH=yes \
+		$(CUSTOM_ENV_NAME) \
+		$(GENERATE_COMMAND)
+
+.PHONY: kill-generate
+kill-generate:
+	$(NEURO) kill $(GENERATE_JOB)
+
+.PHONY: connect-generate
+connect-generate:
+	$(NEURO) exec --no-tty --no-key-check $(GENERATE_JOB) bash
+
+.PHONY: developing
+developing:
+	$(NEURO) run \
+		--name $(DEVELOPING_JOB) \
+		--preset $(TRAINING_MACHINE_TYPE) \
+		--volume $(DATA_DIR_STORAGE):$(PROJECT_PATH_ENV)/$(DATA_DIR):ro \
+		--volume $(PROJECT_PATH_STORAGE)/$(CODE_DIR):$(PROJECT_PATH_ENV)/$(CODE_DIR):rw \
+		--volume $(PROJECT_PATH_STORAGE)/$(RESULTS_DIR):$(PROJECT_PATH_ENV)/$(RESULTS_DIR):rw \
+		--env EXPOSE_SSH=yes \
+		--http 8888 \
+		--no-http-auth \
+	    --detach \
+		$(CUSTOM_ENV_NAME)
+
+.PHONY: kill-developing
+kill-developing:
+	neuro kill $(DEVELOPING_JOB)
+
+.PHONY: connect-developing
+connect-developing:
+	neuro exec -t $(DEVELOPING_JOB) bash
 
 .PHONY: jupyter
 jupyter: upload-code upload-notebooks ### Run a job with Jupyter Notebook and open UI in the default browser
