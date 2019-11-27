@@ -111,15 +111,15 @@ clean-notebooks:  ### Delete notebooks directory from the platform storage
 	$(NEURO) rm --recursive $(PROJECT_PATH_STORAGE)/$(NOTEBOOKS_DIR)/*
 
 .PHONY: upload-results
-upload-results:  ### Upload code directory to the platform storage
+upload-results:  ### Upload results directory to the platform storage
 	$(NEURO) cp --recursive --update --no-target-directory $(RESULTS_DIR) $(PROJECT_PATH_STORAGE)/$(RESULTS_DIR)
 
 .PHONY: download-results
-download-results:  ### Download notebooks directory from the platform storage
+download-results:  ### Download results directory from the platform storage
 	$(NEURO) cp --recursive --update --no-target-directory $(PROJECT_PATH_STORAGE)/$(RESULTS_DIR) $(RESULTS_DIR)
 
 .PHONY: upload  ### Upload code, data, and notebooks directories to the platform storage
-upload: upload-code upload-data upload-notebooks
+upload: upload-code upload-data upload-notebooks upload-results
 
 .PHONY: clean  ### Delete code, data, and notebooks directories from the platform storage
 clean: clean-code clean-data clean-notebooks
@@ -218,7 +218,7 @@ tensorboard:  ### Run a job with TensorBoard and open UI in the default browser
 		--browse \
 		--volume $(PROJECT_PATH_STORAGE)/$(RESULTS_DIR):$(PROJECT_PATH_ENV)/$(RESULTS_DIR):ro \
 		$(CUSTOM_ENV_NAME) \
-		'tensorboard --host=0.0.0.0 --logdir=$(PROJECT_PATH_ENV)/$(RESULTS_DIR)'
+		'tensorboard --host=0.0.0.0 --logdir=$(PROJECT_PATH_ENV)/$(RESULTS_DIR)/board'
 
 .PHONY: kill-tensorboard
 kill-tensorboard:  ### Terminate the job with TensorBoard

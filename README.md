@@ -83,7 +83,10 @@ You also can train your own model. To do it use the following command:
 
 `make training`
 
-To specify model and training parameters modify `train_config.cfg` file.
+To specify model and training parameters modify `train_config.cfg` file. Training process can be followed 
+with `tensorboard`:
+
+`make tensorboard`
 
 ### Developing mode
 

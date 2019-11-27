@@ -95,7 +95,7 @@ class Trainer:
                                            nexts.view(-1))
 
             content_mask = torch.ne(prevs, 0)
-            offset_loss = self.off_criteria(content_mask * model_offsets.squeeze(-1), next_offsets)
+            offset_loss = self.off_criteria(content_mask.float() * model_offsets.squeeze(-1), next_offsets)
 
             loss = self.w_cls * class_loss + self.w_off * offset_loss
 
@@ -111,8 +111,8 @@ class Trainer:
                 self.optimizer.step()
                 self.optimizer.zero_grad()
 
-                # for k, v in avg_losses.items():
-                #     self.writer.add_scalar(f'training/{key}', value, global_step=self.global_step)
+                for k, v in avg_losses.items():
+                    self.writer.add_scalar(f'training/{k}', v(), global_step=self.global_step)
 
                 self.global_step += 1
 
@@ -130,4 +130,3 @@ class Trainer:
         torch.save(state_dict, path_)
 
         logger.info(f'State dict was saved to {path_}.')
-

@@ -1,14 +1,15 @@
 import logging
+import os
 from pathlib import Path
 
 import configargparse
+import torch
+from torch.utils.tensorboard import SummaryWriter
+
 from model.dataset import MidiDataset
 from model.model import GRUNet
 from model.trainer import Trainer
 from utils.seed import set_seed
-
-import torch
-import os
 
 
 def get_parser() -> configargparse.ArgumentParser:
@@ -16,7 +17,7 @@ def get_parser() -> configargparse.ArgumentParser:
 
     parser.add_argument('-c', '--config_file', required=False, is_config_file=True, help='Config file path.')
 
-    parser.add_argument('--dump_dir', type=Path, default='./dump', help='Dump path.')
+    parser.add_argument('--dump_dir', type=Path, default='../results', help='Dump path.')
     parser.add_argument('--experiment_name', type=str, required=True, help='Experiment name.')
 
     parser.add_argument('--m_hidden_dim', type=int, default=256, help='Model hidden size.')
@@ -71,8 +72,10 @@ def main() -> None:
                    n_layers=params.m_n_layers,
                    drop_prob=params.m_drop_prob)
 
+    writer = SummaryWriter(log_dir=params.dump_dir / f'board/{params.experiment_name}')
+
     trainer = Trainer(model, vocab, dataset,
-                      writer=None,
+                      writer=writer,
                       device=device,
                       train_batch_size=params.batch_size,
                       batch_split=params.batch_split,
