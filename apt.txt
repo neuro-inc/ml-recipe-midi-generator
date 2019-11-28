@@ -1,2 +1,2 @@
-nano
 timidity*
+freepats
