@@ -159,15 +159,15 @@ generate:  ### Run a generate job
 		$(GENERATE_COMMAND)
 
 .PHONY: kill-generate
-kill-generate:
+kill-generate: ### Kill the generate job
 	$(NEURO) kill $(GENERATE_JOB)
 
 .PHONY: connect-generate
-connect-generate:
+connect-generate: ### Connect to the developing job (open terminal on remote server)
 	$(NEURO) exec --no-tty --no-key-check $(GENERATE_JOB) bash
 
 .PHONY: developing
-developing:
+developing: ### Run environment with bash terminal
 	$(NEURO) run \
 		--name $(DEVELOPING_JOB) \
 		--preset $(TRAINING_MACHINE_TYPE) \
@@ -182,11 +182,11 @@ developing:
 		'bash'
 
 .PHONY: kill-developing
-kill-developing:
+kill-developing: ### Kill a developing job
 	neuro kill $(DEVELOPING_JOB)
 
 .PHONY: connect-developing
-connect-developing:
+connect-developing: ### Connect a developing job
 	neuro exec -t $(DEVELOPING_JOB) bash
 
 .PHONY: jupyter
@@ -207,6 +207,10 @@ jupyter: upload-code upload-notebooks ### Run a job with Jupyter Notebook and op
 .PHONY: kill-jupyter
 kill-jupyter:  ### Terminate the job with Jupyter Notebook
 	$(NEURO) kill $(JUPYTER_JOB)
+
+.PHONY: connect-jupyter
+connect-jupyter:  ### Connect to the remote shell running on the jupyter job
+	$(NEURO) exec $(JUPYTER_JOB) bash
 
 .PHONY: tensorboard
 tensorboard:  ### Run a job with TensorBoard and open UI in the default browser
