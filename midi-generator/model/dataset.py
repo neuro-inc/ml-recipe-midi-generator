@@ -78,13 +78,13 @@ class MidiDataset(object):
         for pattern, offset in zip(note_seq, offset_seq):
             if ('.' in pattern) or pattern.isdigit():
                 notes_in_chord = pattern.split('.')
-                notes = []
+                chord_notes = []
                 for current_note in notes_in_chord:
                     new_note = note.Note(int(current_note))
                     new_note.storedInstrument = instrument.Piano()
-                    notes.append(new_note)
+                    chord_notes.append(new_note)
 
-                new_chord = chord.Chord(notes)
+                new_chord = chord.Chord(chord_notes)
                 new_chord.offset = total_offset
                 notes.append(new_chord)
             else:
