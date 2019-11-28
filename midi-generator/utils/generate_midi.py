@@ -3,7 +3,8 @@ import torch
 from tqdm.auto import tqdm
 
 
-def generate_midi(model, vocab, *, seq_len=1024, top_p=0.6, temperature=1.0):
+@torch.no_grad()
+def generate_midi(model, vocab, *, seq_len=1024, top_p=0.6, temperature=1.0, device=torch.device('cpu')):
     assert 0 <= top_p <= 1
     assert 0 < temperature
 
@@ -16,8 +17,8 @@ def generate_midi(model, vocab, *, seq_len=1024, top_p=0.6, temperature=1.0):
 
     with torch.no_grad():
         for _ in tqdm(range(seq_len)):
-            inputs = torch.LongTensor(predicted_seq[-1:]).unsqueeze(0)
-            input_offsets = torch.FloatTensor(offsets[-1:]).unsqueeze(0)
+            inputs = torch.LongTensor(predicted_seq[-1:]).unsqueeze(0).to(device)
+            input_offsets = torch.FloatTensor(offsets[-1:]).unsqueeze(0).to(device)
 
             output_logits, output_offsets, h = model(inputs, input_offsets, h)
             output_logits = output_logits / temperature

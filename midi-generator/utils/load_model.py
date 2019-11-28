@@ -5,7 +5,7 @@ from model.model import GRUNet
 
 
 def load_model(checkpoint_path, device=torch.device('cpu')):
-    state_dict = torch.load(checkpoint_path)
+    state_dict = torch.load(checkpoint_path, map_location='cpu')
 
     model = eval(state_dict['model_repr'])
     model.load_state_dict(state_dict['model'])
