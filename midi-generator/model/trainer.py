@@ -39,7 +39,7 @@ class Trainer:
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay)
 
         self.cls_criteria = LabelSmoothingLossWithLogits(n_classes=len(vocab), smoothing=smoothing,
-                                                         ignore_index=0).to(device)
+                                                         ignore_index=vocab.pad_index).to(device)
         self.off_criteria = nn.SmoothL1Loss().to(device)
 
         logger.info(f'Train Dataset len: {len(train_dataset)}.')
@@ -67,8 +67,8 @@ class Trainer:
         prev_offsets = [torch.FloatTensor(d[2]) for d in data]
         next_offsets = [torch.FloatTensor(d[3]) for d in data]
 
-        prevs = pad_sequence(prevs, batch_first=True, padding_value=0).to(self.device)
-        nexts = pad_sequence(nexts, batch_first=True, padding_value=0).to(self.device)
+        prevs = pad_sequence(prevs, batch_first=True, padding_value=self.vocab.pad_index).to(self.device)
+        nexts = pad_sequence(nexts, batch_first=True, padding_value=self.vocab.pad_index).to(self.device)
 
         prev_offsets = pad_sequence(prev_offsets, batch_first=True, padding_value=0).to(self.device)
         next_offsets = pad_sequence(next_offsets, batch_first=True, padding_value=0).to(self.device)
@@ -94,7 +94,7 @@ class Trainer:
             class_loss = self.cls_criteria(model_nexts.view(-1, model_nexts.size(-1)),
                                            nexts.view(-1))
 
-            content_mask = torch.ne(prevs, 0)
+            content_mask = torch.ne(prevs, self.vocab.pad_index)
             offset_loss = self.off_criteria(content_mask.float() * model_offsets.squeeze(-1), next_offsets)
 
             loss = self.w_cls * class_loss + self.w_off * offset_loss
