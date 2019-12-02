@@ -38,8 +38,8 @@ class Vocab(object):
 
 
 class MidiDataset(object):
-    def __init__(self, *, data_dir, seq_len, expand_coef):
-        self.data_dir = data_dir
+    def __init__(self, *, data_prefix, seq_len, expand_coef):
+        self.data_prefix = data_prefix
         self.seq_len = seq_len
 
         self.__load_files()
@@ -109,7 +109,7 @@ class MidiDataset(object):
         self.note_seqs = []
         self.offset_seqs = []
 
-        files = tqdm(glob.glob(os.path.join(self.data_dir, '*.mid')), desc=f'Loading files from [{self.data_dir}]')
+        files = tqdm(glob.glob(self.data_prefix + '*.mid'), desc=f'Loading files with prefix [{self.data_prefix}]')
         for file in files:
             raw_notes = MidiDataset.load_raw_notes(file)
             note_seq, offset_seq = MidiDataset.encode_notes(raw_notes)

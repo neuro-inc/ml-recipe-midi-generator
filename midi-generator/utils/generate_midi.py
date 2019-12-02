@@ -6,16 +6,9 @@ from tqdm.auto import tqdm
 @torch.no_grad()
 def generate_midi(model, vocab, *, seq_len=1024, top_p=0.6, temperature=1.0, device=torch.device('cpu'),
                   history=None):
-    '''
-    :param model:
-    :param vocab:
-    :param seq_len:
-    :param top_p:
-    :param temperature:
-    :param device:
+    """
     :param history: [(note_id, offset), ....]
-    :return:
-    '''
+    """
     assert 0 <= top_p <= 1
     assert 0 < temperature
 

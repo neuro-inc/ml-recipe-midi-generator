@@ -41,7 +41,7 @@ def get_parser() -> configargparse.ArgumentParser:
     parser.add_argument('--w_cls', type=float, default=1, help='Class criteria weight.')
     parser.add_argument('--w_off', type=float, default=10., help='Offset criteria weight.')
 
-    parser.add_argument('--data_path', type=Path, required=True, help='Path to dir with *.mid files.')
+    parser.add_argument('--data_prefix', type=str, required=True, help='Prefix of train *.mid files.')
     parser.add_argument('--data_coef', type=int, default=100, help='Expand dataset coefficient.')
     parser.add_argument('--data_seq_len', type=int, default=256,
                         help='Lenght of sequences which are used to train the model.')
@@ -64,7 +64,7 @@ def main() -> None:
 
     device = torch.device('cuda') if torch.cuda.is_available() and params.gpu else torch.device('cpu')
 
-    dataset = MidiDataset(data_dir=params.data_path, seq_len=params.data_seq_len, expand_coef=params.data_coef)
+    dataset = MidiDataset(data_prefix=params.data_prefix, seq_len=params.data_seq_len, expand_coef=params.data_coef)
     vocab = dataset.vocab
 
     model = GRUNet(num_embeddings=len(vocab),

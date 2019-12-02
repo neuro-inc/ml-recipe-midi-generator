@@ -98,9 +98,12 @@ but do not forget to upload it on the platform after modification.
 
 You also can train your own model. To do it use the following command:
 
-`make training`
+`make training CONFIG_NAME=base_train_config.cfg`
 
-To specify model and training parameters modify `train_config.cfg` file. Training process can be followed 
+To specify model and training parameters modify `base_train_config.cfg` file. 
+If you want to change training config, just specify `CONFIG_NAME` variable in the command 
+(see `midi-generator/configs` for the full list of available predefined train configs).
+Training process can be followed 
 with `tensorboard`:
 
 `make tensorboard`

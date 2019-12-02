@@ -127,3 +127,7 @@ dmypy.json
 
 # tensorboard outputs
 results/board/*
+
+# result sound files
+results/*.mid
+results/*.wav
