@@ -4,19 +4,39 @@ from tqdm.auto import tqdm
 
 
 @torch.no_grad()
-def generate_midi(model, vocab, *, seq_len=1024, top_p=0.6, temperature=1.0, device=torch.device('cpu')):
+def generate_midi(model, vocab, *, seq_len=1024, top_p=0.6, temperature=1.0, device=torch.device('cpu'),
+                  history=None):
+    '''
+    :param model:
+    :param vocab:
+    :param seq_len:
+    :param top_p:
+    :param temperature:
+    :param device:
+    :param history: [(note_id, offset), ....]
+    :return:
+    '''
     assert 0 <= top_p <= 1
     assert 0 < temperature
 
     model.eval()
 
-    predicted_seq = [random.randint(0, len(vocab) - 1)]
-    offsets = [0]
+    if history is None:
+        predicted_seq = [random.randint(0, len(vocab) - 1)]
+        offsets = [0]
+        h = None
+    else:
+        predicted_seq = [h[0] for h in history]
+        offsets = [h[0] for h in history]
 
-    h = None
+        inputs = torch.LongTensor(predicted_seq[:-1]).unsqueeze(0).to(device)
+        input_offsets = torch.FloatTensor(offsets[:-1]).unsqueeze(0).to(device)
+
+        _, _, h = model(inputs, input_offsets)
 
     with torch.no_grad():
-        for _ in tqdm(range(seq_len)):
+        tqdm_data = tqdm(range(seq_len), desc=f'Sound generation')
+        for _ in tqdm_data:
             inputs = torch.LongTensor(predicted_seq[-1:]).unsqueeze(0).to(device)
             input_offsets = torch.FloatTensor(offsets[-1:]).unsqueeze(0).to(device)
 

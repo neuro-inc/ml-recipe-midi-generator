@@ -60,11 +60,11 @@ class MidiDataset(object):
             if isinstance(element, note.Note):
                 note_seq.append(str(element.pitch))
                 offset_seq.append(float(element.offset) - prev_time)
+                prev_time = element.offset
             elif isinstance(element, chord.Chord):
                 note_seq.append('.'.join(str(n) for n in element.normalOrder))
                 offset_seq.append(float(element.offset) - prev_time)
-
-            prev_time = element.offset
+                prev_time = element.offset
 
         return note_seq, offset_seq
 
@@ -76,6 +76,8 @@ class MidiDataset(object):
         offset_seq = cycle([0.5]) if offset_seq is None else offset_seq
 
         for pattern, offset in zip(note_seq, offset_seq):
+            total_offset += min(max(offset, 0), 1)
+
             if ('.' in pattern) or pattern.isdigit():
                 notes_in_chord = pattern.split('.')
                 chord_notes = []
@@ -93,9 +95,15 @@ class MidiDataset(object):
                 new_note.storedInstrument = instrument.Piano()
                 notes.append(new_note)
 
-            total_offset += max(offset, 0)
-
         return notes
+
+    @staticmethod
+    def load_raw_notes(file_path):
+        midi = converter.parse(file_path)
+        parts = instrument.partitionByInstrument(midi)
+        raw_notes = parts.parts[0].recurse() if instrument.partitionByInstrument(midi) else midi.flat.notes
+
+        return raw_notes
 
     def __load_files(self):
         self.note_seqs = []
@@ -103,11 +111,8 @@ class MidiDataset(object):
 
         files = tqdm(glob.glob(os.path.join(self.data_dir, '*.mid')), desc=f'Loading files from [{self.data_dir}]')
         for file in files:
-            midi = converter.parse(file)
-            parts = instrument.partitionByInstrument(midi)
-            notes_to_parse = parts.parts[0].recurse() if instrument.partitionByInstrument(midi) else midi.flat.notes
-
-            note_seq, offset_seq = MidiDataset.encode_notes(notes_to_parse)
+            raw_notes = MidiDataset.load_raw_notes(file)
+            note_seq, offset_seq = MidiDataset.encode_notes(raw_notes)
 
             self.note_seqs.append(note_seq)
             self.offset_seqs.append(offset_seq)
