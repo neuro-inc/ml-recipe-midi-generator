@@ -1,5 +1,13 @@
 # midi-generator
 
+This project shows a simple example of `.mid` files generation. 
+To do it small model based on `GRU` architecture is used to learn 
+patterns from existed melodies (see `data` directory).   
+
+**WARNING:** Please install `git lfs` before cloning this repository. If you installed `git lfs`
+after repository cloning, please use the command `git lfs fetch`, otherwise you would not be able to run 
+code from this repository.
+
 # Description
 
 This project is created from 
@@ -11,9 +19,18 @@ This project is created from
 | Local directory                      | Description       | Storage URI                                                                  | Environment mounting point |
 |:------------------------------------ |:----------------- |:---------------------------------------------------------------------------- |:-------------------------- | 
 | `data/`                              | Data              | `storage:midi-generator/data/`                              | `/midi-generator/data/` | 
-| `midi-generator/` | Directory with code    | `storage:midi-generator/midi-generator/` | `/midi-generator/cmidi-generator/` |
+| `midi-generator/`                    | Directory with code    | `storage:midi-generator/midi-generator/` | `/midi-generator/cmidi-generator/` |
 | `notebooks/`                         | Jupyter notebooks | `storage:midi-generator/notebooks/`                         | `/midi-generator/notebooks/` |
-| `results/`                         | Logs and results  | `storage:midi-generator/results/`                           | `/midi-generator/results/` |
+| `results/`                           | Logs and results  | `storage:midi-generator/results/`                           | `/midi-generator/results/` |
+
+## Quick start
+
+This repository already contains pretrained models, so you can run `jupyter-notebook` with
+inference code and play with them. To do it, just copy the following command:
+
+`make setup && make upload && make jupyter`
+
+For a deeper understanding of what this command does read the explanation below.
 
 ## How to train your own model or run existed
 
