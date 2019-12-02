@@ -20,7 +20,7 @@ def generate_midi(model, vocab, *, seq_len=1024, top_p=0.6, temperature=1.0, dev
         h = None
     else:
         predicted_seq = [h[0] for h in history]
-        offsets = [h[0] for h in history]
+        offsets = [h[1] for h in history]
 
         inputs = torch.LongTensor(predicted_seq[:-1]).unsqueeze(0).to(device)
         input_offsets = torch.FloatTensor(offsets[:-1]).unsqueeze(0).to(device)
