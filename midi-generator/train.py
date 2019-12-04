@@ -32,7 +32,8 @@ def get_parser() -> configargparse.ArgumentParser:
     parser.add_argument('--n_epochs', type=int, default=10, help='Number of epochs.')
 
     parser.add_argument('--batch_size', type=int, default=128, help='Number of items in batch.')
-    parser.add_argument('--batch_split', type=int, default=1, help='Batch split number.')
+    parser.add_argument('--batch_split', type=int, default=1,
+                        help='Batch will be split into this number chunks during training.')
 
     parser.add_argument('--lr', type=float, default=6.25e-5, help='Learning rate for optimizer.')
     parser.add_argument('--weight_decay', type=float, default=0.01, help='Weight decay for optimizer.')
@@ -42,7 +43,9 @@ def get_parser() -> configargparse.ArgumentParser:
     parser.add_argument('--w_off', type=float, default=10., help='Offset criteria weight.')
 
     parser.add_argument('--data_prefix', type=str, required=True, help='Prefix of train *.mid files.')
-    parser.add_argument('--data_coef', type=int, default=100, help='Expand dataset coefficient.')
+    parser.add_argument('--data_coef', type=int, default=100,
+                        help='Expand dataset coefficient. The number of real elements will be multiplied by this '
+                             'coefficient to expand length of the dataset.')
     parser.add_argument('--data_seq_len', type=int, default=256,
                         help='Lenght of sequences which are used to train the model.')
 
