@@ -1,7 +1,10 @@
+import logging
 import torch
 
 from model.dataset import Vocab
 from model.model import GRUNet
+
+logger = logging.getLogger(__file__)
 
 
 def load_model(checkpoint_path, device=torch.device('cpu')):
@@ -14,5 +17,7 @@ def load_model(checkpoint_path, device=torch.device('cpu')):
 
     model.to(device)
     model.eval()
+
+    logger.info(f'Model was loaded from checkpoint: {checkpoint_path}')
 
     return model, vocab

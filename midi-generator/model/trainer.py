@@ -32,7 +32,6 @@ class Trainer:
                  weight_decay=5e-4, w_cls=1, w_off=10, smoothing=0) -> None:
 
         logger.info(f'Used device: {device}.')
-        logger.info(f'Dataset len: {len(train_dataset)}.')
 
         self.vocab = vocab
         self.model = model.to(device)
