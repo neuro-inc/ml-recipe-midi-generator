@@ -1,18 +1,45 @@
 # midi-generator
 
-This project shows a simple example of `.mid` files generation. 
-To do it small model based on `GRU` architecture is used to learn 
-patterns from existed melodies (see `data` directory).   
-
-**WARNING:** Please install `git lfs` before cloning this repository. If you installed `git lfs`
-after repository cloning, please use the command `git lfs fetch`, otherwise you would not be able to run 
-code from this repository.
-
 # Description
 
-This project is created from 
-[Neuro Platform Project Template](https://github.com/neuromation/cookiecutter-neuro-project) and
- designed to run on [Neuro Platform](https://neu.ro), so you can jump into problem-solving right away.
+A typical MIDI file can be viewed as a sequence of notes and chords with specified 
+offsets that show their place in a melody. At this point of view, chords are a group of notes 
+which are played at the same moment. For melody generation, the next note or chord 
+must be predicted based on already existed part. It's an example of `seq2seq` problem 
+and `GRU` model could be used to solve it. For simplicity, note offsets in the code do not show 
+a specific place of a note or a chord in a piece, they show time delay which must pass 
+before the predicted element is played.    
+
+This project shows a simple example of `.mid` files generation. 
+To do it a small model based on `GRU` architecture is used to learn 
+patterns (order of notes and chords) from existed melodies (see `data` directory).
+
+The project is created from 
+[Neuro Platform Project Template](https://github.com/neuromation/cookiecutter-neuro-project)
+ and  designed to run on [Neuro Platform](https://neu.ro), 
+ so you can jump into problem-solving right away using the instruction from `Quick start`
+ section.
+ 
+<!---**WARNING:** Please install `git lfs` before cloning this repository. If you installed `git lfs`
+after repository cloning, please use the command `git lfs fetch`, otherwise you would not be able to run 
+code from this repository.--->
+
+## Quick start
+
+Firstly, to run this project on [Neuro Platform](https://neu.ro) install `neuro` client:
+
+`pip install -U neuromation`
+
+This repository already contains pretrained models, so you can run `jupyter-notebook` with
+inference code and play with them. To do it, just copy the following command:
+
+`make setup && make upload && make jupyter`
+
+It will ask you to log in on `neuro` platform when the command is run the first time.
+`Github` account can be used for this purpose.
+You also can log in with `neuro login` command.
+For a deeper understanding of what this command does and the project structure read 
+the explanation below.
 
 ## Directory structure
 
@@ -22,15 +49,6 @@ This project is created from
 | `midi-generator/`                    | Directory with code    | `storage:midi-generator/midi-generator/` | `/midi-generator/cmidi-generator/` |
 | `notebooks/`                         | Jupyter notebooks | `storage:midi-generator/notebooks/`                         | `/midi-generator/notebooks/` |
 | `results/`                           | Logs and results  | `storage:midi-generator/results/`                           | `/midi-generator/results/` |
-
-## Quick start
-
-This repository already contains pretrained models, so you can run `jupyter-notebook` with
-inference code and play with them. To do it, just copy the following command:
-
-`make setup && make upload && make jupyter`
-
-For a deeper understanding of what this command does read the explanation below.
 
 ## How to train your own model or run existed
 
@@ -42,7 +60,7 @@ Before environment setup it's required to login on platform:
 
 `neuro login`
 
-It can be done with github account.
+It can be done with `Github` account.
 
 ### Setup development environment 
 The first thing you need to do is specify environment on `neuro` platform. To do it run this command in the project root
