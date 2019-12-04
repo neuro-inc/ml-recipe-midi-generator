@@ -6,7 +6,7 @@ import torch.nn as nn
 from .loss import LabelSmoothingLossWithLogits
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import DataLoader, RandomSampler
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 logger = logging.getLogger(__file__)
 

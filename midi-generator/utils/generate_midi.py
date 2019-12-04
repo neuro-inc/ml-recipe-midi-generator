@@ -1,6 +1,6 @@
 import random
 import torch
-from tqdm.auto import tqdm
+from tqdm.auto import trange
 
 
 @torch.no_grad()
@@ -27,7 +27,7 @@ def generate_midi(model, vocab, *, seq_len=1024, top_p=0.6, temperature=1.0, dev
 
         _, _, h = model(inputs, input_offsets)
 
-    tqdm_data = tqdm(range(seq_len), desc=f'Sound generation')
+    tqdm_data = trange(seq_len, desc=f'Sound generation')
     for _ in tqdm_data:
         inputs = torch.LongTensor(predicted_seq[-1:]).unsqueeze(0).to(device)
         input_offsets = torch.FloatTensor(offsets[-1:]).unsqueeze(0).to(device)
