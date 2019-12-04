@@ -13,20 +13,20 @@ logger = logging.getLogger(__file__)
 
 class AverageMeter:
     def __init__(self):
-        self.count = 0
-        self.sum_value = 0
+        self._counter = 0
+        self._avg_value = 0
 
     def __call__(self):
-        return self.sum_value / self.count
+        return self._avg_value
 
     def update(self, value):
-        self.sum_value += value
-        self.count += 1
+        self._counter += 1
+        self._avg_value = (self._avg_value * (self._counter - 1) + value) / self._counter
 
 
 class Trainer:
     def __init__(self,
-                 model: nn.Module,
+                 model,
                  vocab, train_dataset, writer, *, device=torch.device('cuda'),
                  train_batch_size=32, batch_split=1, n_jobs=4, n_epochs=0, lr=1e-3,
                  weight_decay=5e-4, w_cls=1, w_off=10, smoothing=0) -> None:
