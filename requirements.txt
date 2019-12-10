@@ -1,1 +1,4 @@
+torch
 tqdm==4.32.1
+configargparse==0.15.1
+music21==5.7.1

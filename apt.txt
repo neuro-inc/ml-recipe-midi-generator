@@ -1,1 +1,2 @@
-nano
+timidity*
+freepats
