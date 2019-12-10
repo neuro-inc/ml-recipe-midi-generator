@@ -1,14 +1,6 @@
-# midi-generator
+# MIDI Generator
 
-# Description
-
-A typical MIDI file can be viewed as a sequence of notes and chords with specified 
-offsets that show their place in a melody. At this point of view, chords are a group of notes 
-which are played at the same moment. For melody generation, the next note or chord 
-must be predicted based on already existed part. It's an example of `seq2seq` problem 
-and `GRU` model could be used to solve it. For simplicity, note offsets in the code do not show 
-a specific place of a note or a chord in a piece, they show time delay which must pass 
-before the predicted element is played.    
+A typical MIDI file can be viewed as a sequence of notes and chords with specified offsets that show their place in a melody. From this point of view, chords are a group of notes which are played at the same moment. For melody generation, the next note or chord must be predicted based on already existed part. It's an example of `seq2seq` problem, and `GRU` model could be used to solve it. For simplicity, note offsets in the code do not show a specific place of a note or a chord in a piece; they show time delay which must pass before the predicted element is played.    
 
 This project shows a simple example of `.mid` files generation. 
 To do it a small model based on `GRU` architecture is used to learn 
@@ -17,29 +9,26 @@ patterns (order of notes and chords) from existed melodies (see `data` directory
 The project is created from 
 [Neuro Platform Project Template](https://github.com/neuromation/cookiecutter-neuro-project)
  and  designed to run on [Neuro Platform](https://neu.ro), 
- so you can jump into problem-solving right away using the instruction from `Quick start`
- section.
+ so you can jump into problem-solving right away using the instruction from `Quick Start` section.
  
-<!---**WARNING:** Please install `git lfs` before cloning this repository. If you installed `git lfs`
-after repository cloning, please use the command `git lfs fetch`, otherwise you would not be able to run 
-code from this repository.--->
+# Quick Start
 
-## Quick start
+First of all, register on [Neuro Platform](https://neu.ro) and install `neuro` client:
 
-Firstly, to run this project on [Neuro Platform](https://neu.ro) install `neuro` client:
+```
+pip install -U neuromation
+neuro login
+```
 
-`pip install -U neuromation`
+This repository already contains pre-trained models, so you can run Jupyter Notebook with inference code and play with them. To do it, copy the following command:
 
-This repository already contains pretrained models, so you can run `jupyter-notebook` with
-inference code and play with them. To do it, just copy the following command:
+```
+make setup && make upload && make jupyter
+```
 
-`make setup && make upload && make jupyter`
+For a deeper understanding of what this command does and the project structure, read the explanation below.
 
-It will ask you to log in on `neuro` platform when the command is run the first time.
-`Github` account can be used for this purpose.
-You also can log in with `neuro login` command.
-For a deeper understanding of what this command does and the project structure read 
-the explanation below.
+# Development Environment
 
 ## Directory structure
 
