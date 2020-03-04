@@ -1,7 +1,7 @@
 ##### PATHS #####
 
 DATA_DIR?=data
-CODE_DIR?=midi-generator
+CODE_DIR?=midi_generator
 NOTEBOOKS_DIR?=notebooks
 RESULTS_DIR?=results
 
