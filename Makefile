@@ -55,10 +55,11 @@ HTTP_AUTH?=--http-auth
 TRAIN_STREAM_LOGS?=yes
 
 # Command to run training inside the environment. Example:
+CONFIG_NAME=base_train_config.cfg
 TRAIN_CMD?=python -u $(CODE_DIR)/train.py -c $(CODE_DIR)/configs/$(CONFIG_NAME)
 
-CONFIG_NAME=base_train_config.cfg
-GENERATE_COMMAND=bash -c "cd $(PROJECT_PATH_ENV) && python -u $(CODE_DIR)/generate.py -c $(CODE_DIR)/configs/generate_config.cfg"
+GEN_CONFIG_NAME=generate_config.cfg
+GENERATE_COMMAND=python -u $(CODE_DIR)/generate.py -c $(CODE_DIR)/configs/$(GEN_CONFIG_NAME)
 
 
 LOCAL_PORT?=2211
@@ -274,12 +275,19 @@ generate:  ### Run the generation job
 	$(NEURO) run \
 		--name $(GENERATE_JOB) \
 		--preset $(PRESET) \
+		--detach \
 		--volume $(DATA_DIR_STORAGE):$(PROJECT_PATH_ENV)/$(DATA_DIR):ro \
 		--volume $(PROJECT_PATH_STORAGE)/$(CODE_DIR):$(PROJECT_PATH_ENV)/$(CODE_DIR):ro \
 		--volume $(PROJECT_PATH_STORAGE)/$(RESULTS_DIR):$(PROJECT_PATH_ENV)/$(RESULTS_DIR):rw \
+		--env PYTHONPATH=$(PROJECT_PATH_ENV) \
 		--env EXPOSE_SSH=yes \
+		--env JOB_TIMEOUT=0 \
 		$(CUSTOM_ENV_NAME) \
-		$(GENERATE_COMMAND)
+		bash -c 'cd $(PROJECT_PATH_ENV) && $(GENERATE_COMMAND)'
+ifeq ($(TRAIN_STREAM_LOGS), yes)
+	@echo "Streaming logs of the job $(GENERATE_JOB)"
+	$(NEURO) exec --no-key-check -T $(GENERATE_JOB) "tail -f /output" || echo -e "Stopped streaming logs.\nUse 'neuro logs <job>' to see full logs."
+endif
 
 .PHONY: connect-generate
 connect-generate: ### Connect to the generation job (open terminal on remote server)
