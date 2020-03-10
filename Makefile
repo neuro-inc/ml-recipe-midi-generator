@@ -102,6 +102,7 @@ __bake: upload-code upload-data upload-notebooks
 	$(NEURO) exec --no-tty --no-key-check $(SETUP_JOB) \
            "jupyter trust /project-local/notebooks/inference.ipynb"
 
+
 ##### STORAGE #####
 
 .PHONY: upload-code
