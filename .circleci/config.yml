@@ -52,7 +52,7 @@ workflows:
       - build:
           filters:
             branches:
-              ignore: CHANGEME
+              ignore: /.*/
             tags:
               only:
                 - /.*/
