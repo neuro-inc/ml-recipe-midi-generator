@@ -42,8 +42,8 @@ jobs:
       - docker/check
       - docker/push:
           image: neuromation/ml-recipe-midi-generator
-#          tag: $CIRCLE_TAG,latest
           tag: latest
+#          tag: $CIRCLE_TAG,latest
 
 
 workflows:
