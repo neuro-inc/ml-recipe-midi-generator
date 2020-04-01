@@ -1,3 +1,5 @@
+BASE_ENV_VERSION=v1.5
+
 ##### PATHS #####
 
 DATA_DIR?=data
@@ -25,7 +27,7 @@ FILEBROWSER_JOB?=filebrowser-$(PROJECT_POSTFIX)
 
 ##### ENVIRONMENTS #####
 
-BASE_ENV_NAME?=neuromation/base
+BASE_ENV_NAME?=neuromation/base:$(BASE_ENV_VERSION)
 CUSTOM_ENV_NAME?=image:neuromation-$(PROJECT_POSTFIX)
 
 ##### VARIABLES YOU MAY WANT TO MODIFY #####
