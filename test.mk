@@ -5,7 +5,7 @@ PROJECT_PATH_ENV=/midi-generator
 test_jupyter_demo:
 	make jupyter \
          JUPYTER_CMD="bash -c ' \
-             pip install --progress-bar=off pandoc && \
+             pip3 install --progress-bar=off pandoc && \
              jupyter nbconvert \
              --execute \
              --no-prompt \
