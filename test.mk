@@ -16,6 +16,7 @@ PROJECT_PATH_ENV=/midi-generator
 test_jupyter_demo:
 	make jupyter \
          JUPYTER_CMD=" \
+             pip install pandoc && \
              jupyter nbconvert \
              --execute \
              --no-prompt \
