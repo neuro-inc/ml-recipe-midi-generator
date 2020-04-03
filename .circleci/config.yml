@@ -35,7 +35,7 @@ jobs:
             export CUSTOM_ENV_NAME=$IMAGE_URI
             make setup __BAKE_SETUP=yes
 
-            make -f test.mk test_jupyter_demo
+            make -f test.mk test_jupyter_demo PRESET=cpu-small
 
             neuro pull $IMAGE_URI
             echo "CIRCLE_TAG=$CIRCLE_TAG"
