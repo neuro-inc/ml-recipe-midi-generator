@@ -221,7 +221,8 @@ connect-developing: ### Connect a developing job
 	neuro exec -t $(DEVELOPING_JOB) bash
 
 .PHONY: jupyter
-jupyter: upload-code upload-notebooks ### Run a job with Jupyter Notebook and open UI in the default browser
+# jupyter: upload-code upload-notebooks ### Run a job with Jupyter Notebook and open UI in the default browser
+jupyter:
 	$(NEURO) run \
 		--name $(JUPYTER_JOB) \
 		--preset $(TRAINING_MACHINE_TYPE) \
