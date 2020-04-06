@@ -26,11 +26,10 @@ jobs:
       - run:
           name: Build Image
           command: |
-            make jupyter JUPYTER_CMD="false"
-            false
-
             neuro config login-with-token $NEURO_TOKEN
             neuro config docker
+            make jupyter JUPYTER_CMD="false"
+            false
             export IMAGE_NAME=neuromation/ml-recipe-midi-generator
             export IMAGE_REF=$IMAGE_NAME:$CIRCLE_BUILD_NUM
             export IMAGE_URI=image:$IMAGE_REF
