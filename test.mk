@@ -16,7 +16,7 @@ CMD_JUPYTER_NBCONVERT=\
   --to=asciidoc \
   --output=/tmp/out \
   $(PROJECT_PATH_ENV)/$(NOTEBOOKS_DIR)/inference.ipynb \
-  2>&1 | grep -P \"NOT Writing \d+ bytes to /tmp/out.asciidoc\"
+  2>&1 | grep -P \"Writing \d+ bytes to /tmp/out.asciidoc\"
 
 
 .PHONY: test_jupyter
