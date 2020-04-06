@@ -37,15 +37,17 @@ jobs:
             export CUSTOM_ENV_NAME=$IMAGE_URI
             make setup __BAKE_SETUP=yes | tee
 
-            echo "Testing mounted recipe on cpu..."
-            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/midi-generator TRAINING_MACHINE_TYPE=cpu-small | tee
-            echo "Testing mounted recipe on GPU..."
-            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/midi-generator TRAINING_MACHINE_TYPE=gpu-small | tee
+            export PROJECT_PATH_ENV=/midi-generator
+            make -f test.mk test_jupyter_demo TRAINING_MACHINE_TYPE=cpu-small | tee
+            echo -e "\n[+] Test passed: $PROJECT_PATH_ENV on CPU\n"
+            make -f test.mk test_jupyter_demo TRAINING_MACHINE_TYPE=gpu-small | tee
+            echo -e "\n[+] Test passed: $PROJECT_PATH_ENV on GPU\n"
 
-            echo "Testing baked recipe on cpu..."
-            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/project-local  TRAINING_MACHINE_TYPE=cpu-small | tee
-            echo "Testing baked recipe on GPU..."
-            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/project-local  TRAINING_MACHINE_TYPE=gpu-small | tee
+            export PROJECT_PATH_ENV=/project-local
+            make -f test.mk test_jupyter_demo TRAINING_MACHINE_TYPE=cpu-small | tee
+            echo -e "\n[+] Test passed: $PROJECT_PATH_ENV on CPU\n"
+            make -f test.mk test_jupyter_demo TRAINING_MACHINE_TYPE=gpu-small | tee
+            echo -e "\n[+] Test passed: $PROJECT_PATH_ENV on GPU\n"
 
             neuro pull $IMAGE_URI | tee
             echo "CIRCLE_TAG=$CIRCLE_TAG"
