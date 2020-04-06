@@ -37,13 +37,13 @@ jobs:
 
             echo "Testing mounted recipe on cpu..."
             make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/midi-generator TRAINING_MACHINE_TYPE=cpu-small | tee
-#            echo "Testing mounted recipe on GPU..."
-#            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/midi-generator TRAINING_MACHINE_TYPE=gpu-small | tee
-#
-#            echo "Testing baked recipe on cpu..."
-#            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/project-local  TRAINING_MACHINE_TYPE=cpu-small | tee
-#            echo "Testing baked recipe on GPU..."
-#            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/project-local  TRAINING_MACHINE_TYPE=gpu-small | tee
+            echo "Testing mounted recipe on GPU..."
+            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/midi-generator TRAINING_MACHINE_TYPE=gpu-small | tee
+
+            echo "Testing baked recipe on cpu..."
+            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/project-local  TRAINING_MACHINE_TYPE=cpu-small | tee
+            echo "Testing baked recipe on GPU..."
+            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/project-local  TRAINING_MACHINE_TYPE=gpu-small | tee
 
             neuro pull $IMAGE_URI
             echo "CIRCLE_TAG=$CIRCLE_TAG"
