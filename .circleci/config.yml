@@ -28,24 +28,22 @@ jobs:
           command: |
             neuro config login-with-token $NEURO_TOKEN
             neuro config docker
-            make jupyter JUPYTER_CMD=false
             export IMAGE_NAME=neuromation/ml-recipe-midi-generator
             export IMAGE_REF=$IMAGE_NAME:$CIRCLE_BUILD_NUM
             export IMAGE_URI=image:$IMAGE_REF
             export PROJECT_PATH_STORAGE=storage:build-$CIRCLE_BUILD_NUM
             export CUSTOM_ENV_NAME=$IMAGE_URI
-            make setup __BAKE_SETUP=yes
-
+            make setup __BAKE_SETUP=yes | tee
 
             echo "Testing mounted recipe on cpu..."
-            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/midi-generator TRAINING_MACHINE_TYPE=cpu-small
-            echo "Testing mounted recipe on GPU..."
-            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/midi-generator TRAINING_MACHINE_TYPE=gpu-small
-
-            echo "Testing baked recipe on cpu..."
-            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/project-local  TRAINING_MACHINE_TYPE=cpu-small
-            echo "Testing baked recipe on GPU..."
-            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/project-local  TRAINING_MACHINE_TYPE=gpu-small
+            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/midi-generator TRAINING_MACHINE_TYPE=cpu-small | tee
+#            echo "Testing mounted recipe on GPU..."
+#            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/midi-generator TRAINING_MACHINE_TYPE=gpu-small | tee
+#
+#            echo "Testing baked recipe on cpu..."
+#            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/project-local  TRAINING_MACHINE_TYPE=cpu-small | tee
+#            echo "Testing baked recipe on GPU..."
+#            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/project-local  TRAINING_MACHINE_TYPE=gpu-small | tee
 
             neuro pull $IMAGE_URI
             echo "CIRCLE_TAG=$CIRCLE_TAG"
