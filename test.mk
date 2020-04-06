@@ -14,8 +14,8 @@ test_jupyter_demo:
             --no-input \
             --to=asciidoc \
             --output=/tmp/out \
-            $(PROJECT_PATH_ENV)/$(NOTEBOOKS_DIR)/inference.ipynb && \
-          cat /tmp/out.asciidoc && \
+            $(PROJECT_PATH_ENV)/$(NOTEBOOKS_DIR)/inference.ipynb \
+            | grep -P \"Writing \d+ bytes to /tmp/out\" && \
           echo "OK" \
        '"
 
