@@ -56,10 +56,6 @@ PIP?=pip install --progress-bar=off
 NEURO?=neuro
 
 ##### HELP #####
-.PHONY: fffalso
-fffalso:
-	@echo doing fffalso
-	false
 
 .PHONY: help
 help:

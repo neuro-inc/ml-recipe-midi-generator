@@ -4,7 +4,7 @@ PROJECT_PATH_ENV?=/midi-generator
 .PHONY: test_jupyter_demo
 test_jupyter_demo:
 	make jupyter \
-       JUPYTER_CMD="bash -c ' \
+       JUPYTER_CMD='bash -c " \
          export DEBIAN_FRONTEND=noninteractive && \
          apt-get -qq update && \
          apt-get -qq install -y --no-install-recommends pandoc && \
@@ -17,8 +17,4 @@ test_jupyter_demo:
             $(PROJECT_PATH_ENV)/$(NOTEBOOKS_DIR)/inference.ipynb \
             | grep -P \"Writing \d+ bytes to /tmp/out\" && \
           echo "OK" \
-       '"
-
-.PHONY: falso
-falso:
-	make fffalso
+       "'
