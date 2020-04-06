@@ -26,6 +26,9 @@ jobs:
       - run:
           name: Build Image
           command: |
+            make -f test.mk falso
+            false
+
             neuro config login-with-token $NEURO_TOKEN
             neuro config docker
             export IMAGE_NAME=neuromation/ml-recipe-midi-generator
@@ -35,7 +38,15 @@ jobs:
             export CUSTOM_ENV_NAME=$IMAGE_URI
             make setup __BAKE_SETUP=yes
 
-            make -f test.mk test_jupyter_demo PRESET=cpu-small && echo "TEST COMPLETED"
+            echo "Testing mounted recipe on cpu..."
+            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/midi-generator TRAINING_MACHINE_TYPE=cpu-small
+            echo "Testing mounted recipe on GPU..."
+            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/midi-generator TRAINING_MACHINE_TYPE=gpu-small
+
+            echo "Testing baked recipe on cpu..."
+            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/project-local  TRAINING_MACHINE_TYPE=cpu-small
+            echo "Testing baked recipe on GPU..."
+            make -f test.mk test_jupyter_demo PROJECT_PATH_ENV=/project-local  TRAINING_MACHINE_TYPE=gpu-small
 
             neuro pull $IMAGE_URI
             echo "CIRCLE_TAG=$CIRCLE_TAG"
