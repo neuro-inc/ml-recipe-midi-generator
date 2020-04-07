@@ -3,7 +3,7 @@ include Makefile
 CMD_PREPARE=\
   export DEBIAN_FRONTEND=noninteractive && \
   apt-get -qq update && \
-  apt-get -qq install -y --no-install-recommends pandoc
+  apt-get -qq install -y --no-install-recommends pandoc >/dev/null
 
 CMD_NBCONVERT=\
   jupyter nbconvert \
@@ -13,7 +13,7 @@ CMD_NBCONVERT=\
   --to=asciidoc \
   --output=/tmp/out \
   $(PROJECT_PATH_ENV)/$(NOTEBOOKS_DIR)/inference.ipynb \
-  2>&1 | grep -P \"Writing \d+ bytes to /tmp/out.asciidoc\"
+  2>&1 | tee | grep -P \"Writing \d+ bytes to /tmp/out.asciidoc\"
 
 
 .PHONY: test_jupyter
