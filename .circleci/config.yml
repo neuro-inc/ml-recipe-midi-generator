@@ -47,11 +47,12 @@ jobs:
 
             neuro pull $IMAGE_URI | tee
             echo "CIRCLE_TAG=$CIRCLE_TAG"
-            docker tag $IMAGE_REF $IMAGE_NAME:debug
+            docker tag $IMAGE_REF $IMAGE_NAME:$CIRCLE_TAG
+            docker tag $IMAGE_REF $IMAGE_NAME:latest
       - docker/check
       - docker/push:
           image: neuromation/ml-recipe-midi-generator
-          tag: debug
+          tag: $CIRCLE_TAG,latest
 
 
 workflows:
@@ -62,7 +63,7 @@ workflows:
       - build:
           filters:
             branches:
-              ignore: CHANGEME
+              ignore: /.*/
             tags:
               only:
                 - /.*/
