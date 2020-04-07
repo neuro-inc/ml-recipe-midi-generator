@@ -21,11 +21,15 @@ CMD_JUPYTER_NBCONVERT=\
 
 .PHONY: test_jupyter
 test_jupyter:
-	make jupyter JUPYTER_CMD='bash -c "$(CMD_REQUIREMENTS) && $(CMD_JUPYTER_NBCONVERT)"'
+	make jupyter \
+        JUPYTER_CMD='bash -c "$(CMD_REQUIREMENTS) && $(CMD_JUPYTER_NBCONVERT)"' ;\
+	echo "Test finished: PROJECT_PATH_ENV=$(PROJECT_PATH_ENV) TRAINING_MACHINE_TYPE=$(TRAINING_MACHINE_TYPE)"
 
 .PHONY: test_jupyter_baked
+test_jupyter_baked: PROJECT_PATH_ENV=/project-local
 test_jupyter_baked:
 	neuro run \
 		--preset $(TRAINING_MACHINE_TYPE) \
 		$(CUSTOM_ENV_NAME) \
-		bash -c "$(CMD_REQUIREMENTS) && $(CMD_JUPYTER_NBCONVERT)"
+		bash -c "$(CMD_REQUIREMENTS) && $(CMD_JUPYTER_NBCONVERT)" ;\
+	echo "Test finished: PROJECT_PATH_ENV=$(PROJECT_PATH_ENV) TRAINING_MACHINE_TYPE=$(TRAINING_MACHINE_TYPE)"

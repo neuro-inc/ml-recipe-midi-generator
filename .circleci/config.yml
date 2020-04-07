@@ -40,10 +40,8 @@ jobs:
             make -f test.mk test_jupyter TRAINING_MACHINE_TYPE=cpu-small | tee
             make -f test.mk test_jupyter TRAINING_MACHINE_TYPE=gpu-small | tee
 
-            make -f test.mk test_jupyter_baked TRAINING_MACHINE_TYPE=cpu-small \
-              PROJECT_PATH_ENV=/project-local | tee
-            make -f test.mk test_jupyter_baked TRAINING_MACHINE_TYPE=gpu-small \
-              PROJECT_PATH_ENV=/project-local | tee
+            make -f test.mk test_jupyter_baked TRAINING_MACHINE_TYPE=cpu-small | tee
+            make -f test.mk test_jupyter_baked TRAINING_MACHINE_TYPE=gpu-small | tee
 
             neuro pull $IMAGE_URI | tee
             echo "CIRCLE_TAG=$CIRCLE_TAG"
