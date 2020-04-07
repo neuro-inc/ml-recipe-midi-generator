@@ -12,12 +12,12 @@ CMD_NBCONVERT=\
   --no-input \
   --to=asciidoc \
   --output=/tmp/out \
-  $(PROJECT_PATH_ENV)/$(NOTEBOOKS_DIR)/inference.ipynb \
-  2>&1 | tee | grep -P \"Writing \d+ bytes to /tmp/out.asciidoc\"
+  $(PROJECT_PATH_ENV)/$(NOTEBOOKS_DIR)/inference.ipynb && \
+  echo "Test succeeded: PROJECT_PATH_ENV=$(PROJECT_PATH_ENV) TRAINING_MACHINE_TYPE=$(TRAINING_MACHINE_TYPE)"
 
 
 .PHONY: test_jupyter
-test_jupyter: JUPYTER_CMD=bash -c "$(CMD_PREPARE) && $(CMD_NBCONVERT)"
+test_jupyter: JUPYTER_CMD=bash -c '$(CMD_PREPARE) && $(CMD_NBCONVERT)'
 test_jupyter: jupyter
 
 .PHONY: test_jupyter_baked
@@ -26,4 +26,4 @@ test_jupyter_baked:
 	neuro run \
 		--preset $(TRAINING_MACHINE_TYPE) \
 		$(CUSTOM_ENV_NAME) \
-		bash -c "$(CMD_PREPARE) && $(CMD_NBCONVERT)"
+		bash -c '$(CMD_PREPARE) && $(CMD_NBCONVERT)'
