@@ -1,12 +1,11 @@
 include Makefile
 
-
-CMD_REQUIREMENTS=\
+CMD_PREPARE=\
   export DEBIAN_FRONTEND=noninteractive && \
   apt-get -qq update && \
   apt-get -qq install -y --no-install-recommends pandoc
 
-CMD_JUPYTER_NBCONVERT=\
+CMD_NBCONVERT=\
   jupyter nbconvert \
   --execute \
   --no-prompt \
@@ -18,10 +17,8 @@ CMD_JUPYTER_NBCONVERT=\
 
 
 .PHONY: test_jupyter
-test_jupyter:
-	make jupyter \
-        JUPYTER_CMD='bash -c "$(CMD_REQUIREMENTS) && $(CMD_JUPYTER_NBCONVERT)"' ;\
-	echo "Test finished: PROJECT_PATH_ENV=$(PROJECT_PATH_ENV) TRAINING_MACHINE_TYPE=$(TRAINING_MACHINE_TYPE)"
+test_jupyter: JUPYTER_CMD=bash -c "$(CMD_PREPARE) && $(CMD_NBCONVERT)"
+test_jupyter: jupyter
 
 .PHONY: test_jupyter_baked
 test_jupyter_baked: PROJECT_PATH_ENV=/project-local
@@ -29,5 +26,4 @@ test_jupyter_baked:
 	neuro run \
 		--preset $(TRAINING_MACHINE_TYPE) \
 		$(CUSTOM_ENV_NAME) \
-		bash -c "$(CMD_REQUIREMENTS) && $(CMD_JUPYTER_NBCONVERT)" ;\
-	echo "Test finished: PROJECT_PATH_ENV=$(PROJECT_PATH_ENV) TRAINING_MACHINE_TYPE=$(TRAINING_MACHINE_TYPE)"
+		bash -c "$(CMD_PREPARE) && $(CMD_NBCONVERT)"
