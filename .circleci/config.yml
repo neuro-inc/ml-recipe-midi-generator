@@ -25,7 +25,7 @@ jobs:
             pip install --user --upgrade pip neuromation
             pip install --user -r .circleci/requirements.txt
       - run:
-          name: Build Image
+          name: Build and Test Image
           command: |
             neuro config login-with-token $NEURO_TOKEN
             neuro config show
@@ -37,16 +37,28 @@ jobs:
             export CUSTOM_ENV_NAME=$IMAGE_URI
             make setup __BAKE_SETUP=yes | tee
 
-            make -f test.mk test_jupyter TRAINING_MACHINE_TYPE=cpu-small | tee
-            make -f test.mk test_jupyter TRAINING_MACHINE_TYPE=gpu-small | tee
-
-            make -f test.mk test_jupyter_baked TRAINING_MACHINE_TYPE=cpu-small | tee
-            make -f test.mk test_jupyter_baked TRAINING_MACHINE_TYPE=gpu-small | tee
+            make -f test.mk _generate_random_label > /tmp/test-id.txt
+            export TAG="test-id:$(cat /tmp/test-id.txt)"
+            make -f test.mk test_jupyter TRAINING_MACHINE_TYPE=cpu-small \
+                RUN_EXTRA="--tag=$TAG" | tee
+            make -f test.mk test_jupyter TRAINING_MACHINE_TYPE=gpu-small \
+                RUN_EXTRA="--tag=$TAG" | tee
+            make -f test.mk test_jupyter_baked TRAINING_MACHINE_TYPE=cpu-small \
+                RUN_EXTRA="--tag=$TAG" | tee
+            make -f test.mk test_jupyter_baked TRAINING_MACHINE_TYPE=gpu-small \
+                RUN_EXTRA="--tag=$TAG" | tee
 
             neuro pull $IMAGE_URI | tee
             echo "CIRCLE_TAG=$CIRCLE_TAG"
             docker tag $IMAGE_REF $IMAGE_NAME:$CIRCLE_TAG
             docker tag $IMAGE_REF $IMAGE_NAME:latest
+      - run:
+          name: Kill jobs left
+          command: |
+            export JOBS_LEFT=$(neuro -q ps --tag "test-id:`cat /tmp/test-id.txt`")
+            [ ! "$JOBS_LEFT" ] || neuro kill $JOBS_LEFT
+          when: always
+
       - docker/check
       - docker/push:
           image: neuromation/ml-recipe-midi-generator
