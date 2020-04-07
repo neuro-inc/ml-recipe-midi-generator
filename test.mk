@@ -1,7 +1,5 @@
-PROJECT_PATH_ENV?=/midi-generator
-NOTEBOOKS_DIR?=notebooks
-CUSTOM_ENV_NAME?=image:neuromation-midi-generator
-TRAINING_MACHINE_TYPE?=cpu-small
+include Makefile
+
 
 CMD_REQUIREMENTS=\
   export DEBIAN_FRONTEND=noninteractive && \
