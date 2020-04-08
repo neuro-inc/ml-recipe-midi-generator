@@ -7,8 +7,6 @@ executors:
 
 defaults: &defaults
   executor: python
-  environment:
-    IMAGE_NAME: neuromation/ml-recipe-midi-generator
 
 orbs:
   docker: circleci/docker@0.5.20
@@ -20,6 +18,23 @@ jobs:
     <<: *defaults
 
     steps:
+      - run:
+        name: Setup Environment Variables
+        command: |
+            echo "
+              export PROJECT_NAME=ml-recipe-midi-generator
+              export PROJECT_PATH_STORAGE=storage:build-$PROJECT_NAME-$CIRCLE_BUILD_NUM
+              export IMAGE_NAME=neuromation/$PROJECT_NAME
+              export IMAGE_REF=$IMAGE_NAME:$CIRCLE_WORKFLOW_ID
+            " >> $BASH_ENV
+      - run:
+        name: CHECK Environment Variables
+        command: |
+            echo $PROJECT_NAME
+            echo $PROJECT_PATH_STORAGE
+            echo $IMAGE_NAME
+            echo $IMAGE_REF
+
       - setup_remote_docker
       - checkout
       - run: &install_dependencies
@@ -33,8 +48,6 @@ jobs:
       - run:
           name: Build and Test Image
           command: |
-            export IMAGE_REF=$IMAGE_NAME:$CIRCLE_BUILD_NUM
-            export PROJECT_PATH_STORAGE=storage:build-ml-recipe-midi-generator-$CIRCLE_BUILD_NUM
             export CUSTOM_ENV_NAME=image:$IMAGE_REF
             make setup __BAKE_SETUP=yes | tee
 
@@ -67,7 +80,6 @@ jobs:
           name: Pull Image
           command: |
             neuro config docker
-            export IMAGE_REF=$IMAGE_NAME:$CIRCLE_BUILD_NUM
             neuro pull image:$IMAGE_REF | tee
             docker tag $IMAGE_REF $IMAGE_NAME:debug
 
