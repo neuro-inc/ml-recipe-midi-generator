@@ -30,13 +30,6 @@ jobs:
             echo "PROJECT_PATH_STORAGE=$PROJECT_PATH_STORAGE" >> $BASH_ENV
             echo "IMAGE_NAME=$IMAGE_NAME" >> $BASH_ENV
             echo "IMAGE_REF=$IMAGE_REF" >> $BASH_ENV
-      - run: &check_env_vars
-          name: Check Environment Variables
-          command: |
-            echo "PROJECT_NAME=$PROJECT_NAME"
-            echo "PROJECT_PATH_STORAGE=$PROJECT_PATH_STORAGE"
-            echo "IMAGE_NAME=$IMAGE_NAME"
-            echo "IMAGE_REF=$IMAGE_REF"
 
       - setup_remote_docker
       - checkout
@@ -54,21 +47,19 @@ jobs:
             export CUSTOM_ENV_NAME=image:$IMAGE_REF
             make setup __BAKE_SETUP=yes | tee
 
-            make -f test.mk _generate_random_label > /tmp/test-id.txt
-            export TAG="test-id:$(cat /tmp/test-id.txt)"
             make -f test.mk test_jupyter TRAINING_MACHINE_TYPE=cpu-small \
-                RUN_EXTRA="--tag=$TAG" | tee
+                RUN_EXTRA="--tag=$CIRCLE_WORKFLOW_ID" | tee
             make -f test.mk test_jupyter TRAINING_MACHINE_TYPE=gpu-small \
-                RUN_EXTRA="--tag=$TAG" | tee
+                RUN_EXTRA="--tag=$CIRCLE_WORKFLOW_ID" | tee
             make -f test.mk test_jupyter_baked TRAINING_MACHINE_TYPE=cpu-small \
-                RUN_EXTRA="--tag=$TAG" | tee
+                RUN_EXTRA="--tag=$CIRCLE_WORKFLOW_ID" | tee
             make -f test.mk test_jupyter_baked TRAINING_MACHINE_TYPE=gpu-small \
-                RUN_EXTRA="--tag=$TAG" | tee
+                RUN_EXTRA="--tag=$CIRCLE_WORKFLOW_ID" | tee
 
       - run:
           name: Cleanup Jobs
           command: |
-            export JOBS_LEFT=$(neuro -q ps --tag "test-id:`cat /tmp/test-id.txt`")
+            export JOBS_LEFT=$(neuro -q ps --tag "test-id:$CIRCLE_WORKFLOW_ID")
             [ ! "$JOBS_LEFT" ] || neuro kill $JOBS_LEFT
           when: always
 
@@ -76,7 +67,6 @@ jobs:
     <<: *defaults
     steps:
       - run: *setup_env_vars
-      - run: *check_env_vars
       - setup_remote_docker
       - checkout
       - run: *install_dependencies
