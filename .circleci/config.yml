@@ -84,13 +84,6 @@ workflows:
   main:
     jobs:
       - build_and_test:
-          filters:
-            tags:
-              ignore:
-                - /.*/
-
-  deploy:
-    jobs:
       - deploy:
           requires:
             - build_and_test
