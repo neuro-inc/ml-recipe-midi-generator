@@ -25,18 +25,18 @@ jobs:
             export PROJECT_PATH_STORAGE=storage:build-$PROJECT_NAME-$CIRCLE_BUILD_NUM
             export IMAGE_NAME=neuromation/$PROJECT_NAME
             export IMAGE_REF=$IMAGE_NAME:$CIRCLE_WORKFLOW_ID
-            
+
             echo "PROJECT_NAME=$PROJECT_NAME" >> $BASH_ENV
             echo "PROJECT_PATH_STORAGE=$PROJECT_PATH_STORAGE" >> $BASH_ENV
             echo "IMAGE_NAME=$IMAGE_NAME" >> $BASH_ENV
             echo "IMAGE_REF=$IMAGE_REF" >> $BASH_ENV
       - run:
-          name: CHECK Environment Variables
+          name: Check Environment Variables
           command: |
-            echo $PROJECT_NAME
-            echo $PROJECT_PATH_STORAGE
-            echo $IMAGE_NAME
-            echo $IMAGE_REF
+            echo "PROJECT_NAME=$PROJECT_NAME"
+            echo "PROJECT_PATH_STORAGE=$PROJECT_PATH_STORAGE"
+            echo "IMAGE_NAME=$IMAGE_NAME"
+            echo "IMAGE_REF=$IMAGE_REF"
 
       - setup_remote_docker
       - checkout
