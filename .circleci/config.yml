@@ -18,7 +18,7 @@ jobs:
     <<: *defaults
 
     steps:
-      - run:
+      - run: &setup_env_vars
           name: Setup Environment Variables
           command: |
             export PROJECT_NAME=ml-recipe-midi-generator
@@ -30,7 +30,7 @@ jobs:
             echo "PROJECT_PATH_STORAGE=$PROJECT_PATH_STORAGE" >> $BASH_ENV
             echo "IMAGE_NAME=$IMAGE_NAME" >> $BASH_ENV
             echo "IMAGE_REF=$IMAGE_REF" >> $BASH_ENV
-      - run:
+      - run: &check_env_vars
           name: Check Environment Variables
           command: |
             echo "PROJECT_NAME=$PROJECT_NAME"
@@ -75,6 +75,8 @@ jobs:
   deploy:
     <<: *defaults
     steps:
+      - run: *setup_env_vars
+      - run: *check_env_vars
       - setup_remote_docker
       - checkout
       - run: *install_dependencies
