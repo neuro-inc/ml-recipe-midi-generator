@@ -21,11 +21,11 @@ jobs:
       - run:
         name: Setup Environment Variables
         command: |
-            echo "
-              export PROJECT_NAME=ml-recipe-midi-generator
-              export PROJECT_PATH_STORAGE=storage:build-$PROJECT_NAME-$CIRCLE_BUILD_NUM
-              export IMAGE_NAME=neuromation/$PROJECT_NAME
-              export IMAGE_REF=$IMAGE_NAME:$CIRCLE_WORKFLOW_ID
+            echo " \
+              export PROJECT_NAME=ml-recipe-midi-generator \
+              export PROJECT_PATH_STORAGE=storage:build-$PROJECT_NAME-$CIRCLE_BUILD_NUM \
+              export IMAGE_NAME=neuromation/$PROJECT_NAME \
+              export IMAGE_REF=$IMAGE_NAME:$CIRCLE_WORKFLOW_ID \
             " >> $BASH_ENV
       - run:
         name: CHECK Environment Variables
