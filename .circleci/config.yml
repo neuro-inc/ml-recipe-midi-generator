@@ -25,11 +25,13 @@ jobs:
             export PROJECT_PATH_STORAGE=storage:build-$PROJECT_NAME-$CIRCLE_WORKFLOW_ID
             export IMAGE_NAME=neuromation/$PROJECT_NAME
             export IMAGE_REF=$IMAGE_NAME:build-$CIRCLE_WORKFLOW_ID
+            export JOBS_TAG=build-$CIRCLE_WORKFLOW_ID
 
             echo "PROJECT_NAME=$PROJECT_NAME" >> $BASH_ENV
             echo "PROJECT_PATH_STORAGE=$PROJECT_PATH_STORAGE" >> $BASH_ENV
             echo "IMAGE_NAME=$IMAGE_NAME" >> $BASH_ENV
             echo "IMAGE_REF=$IMAGE_REF" >> $BASH_ENV
+            echo "JOBS_TAG=$JOBS_TAG" >> $BASH_ENV
 
       - setup_remote_docker
       - checkout
@@ -45,20 +47,17 @@ jobs:
           command: |
             export CUSTOM_ENV_NAME=image:$IMAGE_REF
             make setup __BAKE_SETUP=yes | tee
+            export RUN_EXTRA="--tag=$JOBS_TAG"
 
-            make -f test.mk test_jupyter TRAINING_MACHINE_TYPE=cpu-small \
-                RUN_EXTRA="--tag=$CIRCLE_WORKFLOW_ID" | tee
-            make -f test.mk test_jupyter TRAINING_MACHINE_TYPE=gpu-small \
-                RUN_EXTRA="--tag=$CIRCLE_WORKFLOW_ID" | tee
-            make -f test.mk test_jupyter_baked TRAINING_MACHINE_TYPE=cpu-small \
-                RUN_EXTRA="--tag=$CIRCLE_WORKFLOW_ID" | tee
-            make -f test.mk test_jupyter_baked TRAINING_MACHINE_TYPE=gpu-small \
-                RUN_EXTRA="--tag=$CIRCLE_WORKFLOW_ID" | tee
+            make -f test.mk test_jupyter TRAINING_MACHINE_TYPE=cpu-small | tee
+            make -f test.mk test_jupyter TRAINING_MACHINE_TYPE=gpu-small | tee
+            make -f test.mk test_jupyter_baked TRAINING_MACHINE_TYPE=cpu-small | tee
+            make -f test.mk test_jupyter_baked TRAINING_MACHINE_TYPE=gpu-small | tee
 
       - run:
           name: Cleanup Jobs
           command: |
-            export JOBS_LEFT=$(neuro -q ps --tag "test-id:$CIRCLE_WORKFLOW_ID")
+            export JOBS_LEFT=$(neuro -q ps --tag=$JOBS_TAG)
             [ ! "$JOBS_LEFT" ] || neuro kill $JOBS_LEFT
           when: always
 
