@@ -38,6 +38,11 @@ DATA_DIR_STORAGE?=$(PROJECT_PATH_STORAGE)/$(DATA_DIR)
 
 # The type of the training machine (run `neuro config show` to see the list of available types).
 TRAINING_MACHINE_TYPE?=gpu-small
+
+# Extra options for `neuro run` targets:
+#   make train RUN_EXTRA="--env MYVAR=value"
+RUN_EXTRA?=
+
 # HTTP authentication (via cookies) for the job's HTTP link.
 # Set `HTTP_AUTH?=--no-http-auth` to disable any authentication.
 # WARNING: removing authentication might disclose your sensitive data stored in the job.
@@ -46,6 +51,8 @@ HTTP_AUTH?=--http-auth
 CONFIG_NAME=base_train_config.cfg
 TRAINING_COMMAND="bash -c 'cd $(PROJECT_PATH_ENV) && python -u $(CODE_DIR)/train.py -c $(CODE_DIR)/configs/$(CONFIG_NAME)'"
 GENERATE_COMMAND="bash -c 'cd $(PROJECT_PATH_ENV) && python -u $(CODE_DIR)/generate.py -c $(CODE_DIR)/configs/generate_config.cfg'"
+
+JUPYTER_CMD=jupyter notebook --no-browser --ip=0.0.0.0 --allow-root --NotebookApp.token= --notebook-dir=$(PROJECT_PATH_ENV)
 
 ##### COMMANDS #####
 
@@ -66,7 +73,7 @@ help:
 .PHONY: setup
 setup: ### Setup remote environment
 	$(NEURO) kill $(SETUP_JOB) >/dev/null 2>&1 || :
-	$(NEURO) run \
+	$(NEURO) run $(RUN_EXTRA) \
 		--name $(SETUP_JOB) \
 		--preset cpu-small \
 		--detach \
@@ -153,7 +160,7 @@ clean: clean-code clean-data clean-notebooks
 
 .PHONY: training
 training:  ### Run a training job
-	$(NEURO) run \
+	$(NEURO) run $(RUN_EXTRA) \
 		--name $(TRAINING_JOB) \
 		--preset $(TRAINING_MACHINE_TYPE) \
 		--volume $(DATA_DIR_STORAGE):$(PROJECT_PATH_ENV)/$(DATA_DIR):ro \
@@ -173,7 +180,7 @@ connect-training:  ### Connect to the remote shell running on the training job
 
 .PHONY: generate
 generate:  ### Run a generate job
-	$(NEURO) run \
+	$(NEURO) run $(RUN_EXTRA) \
 		--name $(GENERATE_JOB) \
 		--preset $(TRAINING_MACHINE_TYPE) \
 		--volume $(DATA_DIR_STORAGE):$(PROJECT_PATH_ENV)/$(DATA_DIR):ro \
@@ -193,7 +200,7 @@ connect-generate: ### Connect to the developing job (open terminal on remote ser
 
 .PHONY: developing
 developing: ### Run environment with bash terminal
-	$(NEURO) run \
+	$(NEURO) run $(RUN_EXTRA) \
 		--name $(DEVELOPING_JOB) \
 		--preset $(TRAINING_MACHINE_TYPE) \
 		--volume $(DATA_DIR_STORAGE):$(PROJECT_PATH_ENV)/$(DATA_DIR):ro \
@@ -216,7 +223,7 @@ connect-developing: ### Connect a developing job
 
 .PHONY: jupyter
 jupyter: upload-code upload-notebooks ### Run a job with Jupyter Notebook and open UI in the default browser
-	$(NEURO) run \
+	$(NEURO) run $(RUN_EXTRA) \
 		--name $(JUPYTER_JOB) \
 		--preset $(TRAINING_MACHINE_TYPE) \
 		--http 8888 \
@@ -227,7 +234,7 @@ jupyter: upload-code upload-notebooks ### Run a job with Jupyter Notebook and op
 		--volume $(PROJECT_PATH_STORAGE)/$(NOTEBOOKS_DIR):$(PROJECT_PATH_ENV)/$(NOTEBOOKS_DIR):rw \
 		--volume $(PROJECT_PATH_STORAGE)/$(RESULTS_DIR):$(PROJECT_PATH_ENV)/$(RESULTS_DIR):rw \
 		$(CUSTOM_ENV_NAME) \
-		'jupyter notebook --no-browser --ip=0.0.0.0 --allow-root --NotebookApp.token= --notebook-dir=$(PROJECT_PATH_ENV)'
+		$(JUPYTER_CMD)
 
 .PHONY: kill-jupyter
 kill-jupyter:  ### Terminate the job with Jupyter Notebook
@@ -239,7 +246,7 @@ connect-jupyter:  ### Connect to the remote shell running on the jupyter job
 
 .PHONY: tensorboard
 tensorboard:  ### Run a job with TensorBoard and open UI in the default browser
-	$(NEURO) run \
+	$(NEURO) run $(RUN_EXTRA) \
 		--name $(TENSORBOARD_JOB) \
 		--preset cpu-small \
 		--http 6006 \
@@ -255,7 +262,7 @@ kill-tensorboard:  ### Terminate the job with TensorBoard
 
 .PHONY: filebrowser
 filebrowser:  ### Run a job with File Browser and open UI in the default browser
-	$(NEURO) run \
+	$(NEURO) run $(RUN_EXTRA) \
 		--name $(FILEBROWSER_JOB) \
 		--preset cpu-small \
 		--http 80 \
