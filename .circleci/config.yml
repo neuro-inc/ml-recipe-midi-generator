@@ -93,8 +93,6 @@ workflows:
           requires:
             - build_and_test
           filters:
-            branches:
-              ignore: /.*/
             tags:
               only:
                 - /.*/
