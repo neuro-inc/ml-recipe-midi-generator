@@ -93,9 +93,14 @@ endif
 	$(NEURO) --network-timeout 300 job save $(SETUP_JOB) $(CUSTOM_ENV_NAME)
 	$(NEURO) kill $(SETUP_JOB)
 
+.PHONY: _generate_during_setup
+_generate_during_setup:
+	$(eval IMG := $(CUSTOM_ENV_NAME):during-setup)
+	$(NEURO) --network-timeout 300 job save $(SETUP_JOB) $(IMG)
+	$(MAKE) generate CUSTOM_ENV_NAME=$(IMG)
+
 .PHONY: __bake
-__bake: CUSTOM_ENV_NAME=$(BASE_ENV_NAME)
-__bake: | upload-code upload-notebooks upload-results generate upload-data
+__bake: | upload-code upload-notebooks upload-results _generate_during_setup upload-data
 	echo "#!/usr/bin/env bash" > /tmp/jupyter.sh
 	echo "jupyter notebook \
             --no-browser \
