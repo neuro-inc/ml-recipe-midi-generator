@@ -94,7 +94,8 @@ endif
 	$(NEURO) kill $(SETUP_JOB)
 
 .PHONY: __bake
-__bake: upload-code upload-data upload-notebooks upload-results
+__bake: CUSTOM_ENV_NAME=$(BASE_ENV_NAME)
+__bake: | upload-code upload-notebooks upload-results generate upload-data
 	echo "#!/usr/bin/env bash" > /tmp/jupyter.sh
 	echo "jupyter notebook \
             --no-browser \

@@ -13,15 +13,19 @@ CMD_NBCONVERT=\
   --to=asciidoc \
   --ExecutePreprocessor.timeout=600 \
   --output=/tmp/out \
-  $(PROJECT_PATH_ENV)/$(NOTEBOOKS_DIR)/inference.ipynb && \
-  echo "Test succeeded: PROJECT_PATH_ENV=$(PROJECT_PATH_ENV) TRAINING_MACHINE_TYPE=$(TRAINING_MACHINE_TYPE)"
+  $(PROJECT_PATH_ENV)/$(NOTEBOOKS_DIR)/inference.ipynb
 
+SUCCESS_MSG="[+] Test succeeded: PROJECT_PATH_ENV=$(PROJECT_PATH_ENV) TRAINING_MACHINE_TYPE=$(TRAINING_MACHINE_TYPE)"
+
+
+.PHONY: prepare_test_jupyter
+prepare_test_jupyter: generate
 
 .PHONY: test_jupyter
 test_jupyter: JUPYTER_CMD=bash -c '$(CMD_PREPARE) && $(CMD_NBCONVERT)'
-test_jupyter: jupyter
-	# kill job to set its SUCCEEDED status in platform-api
-	make kill-jupyter
+test_jupyter: | jupyter
+	@echo $(SUCCESS_MSG)
+
 
 .PHONY: test_jupyter_baked
 test_jupyter_baked: PROJECT_PATH_ENV=/project-local
@@ -31,6 +35,5 @@ test_jupyter_baked:
 	    --name $(JOB_NAME) \
 		--preset $(TRAINING_MACHINE_TYPE) \
 		$(CUSTOM_ENV_NAME) \
-		bash -c '$(CMD_PREPARE) && $(CMD_NBCONVERT)'
-	# kill job to set its SUCCEEDED status in platform-api
-	$(NEURO) kill $(JOB_NAME) || :
+		bash -c 'false && $(CMD_PREPARE) && $(CMD_NBCONVERT)'
+	@echo $(SUCCESS_MSG)
