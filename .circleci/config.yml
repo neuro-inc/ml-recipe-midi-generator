@@ -49,9 +49,9 @@ jobs:
             make setup __BAKE_SETUP=yes | tee
             export RUN_EXTRA="--tag=$JOBS_TAG"
 
-            make -f test.mk prepare_test_jupyter
+            make -f test.mk prepare_test_jupyter | tee
             make -f test.mk test_jupyter TRAINING_MACHINE_TYPE=cpu-small | tee
-            make -f test.mk test_jupyter TRAINING_MACHINE_TYPE=gpu-small | tee
+            make -f test.mk test_jupyter TRAINING_MACHINE_TYPE  =gpu-small | tee
             make -f test.mk test_jupyter_baked TRAINING_MACHINE_TYPE=cpu-small | tee
             make -f test.mk test_jupyter_baked TRAINING_MACHINE_TYPE=gpu-small | tee
 
