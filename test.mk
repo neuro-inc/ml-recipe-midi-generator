@@ -23,7 +23,7 @@ prepare_test_jupyter: generate
 
 .PHONY: test_jupyter
 test_jupyter: JUPYTER_CMD=bash -c '$(CMD_PREPARE) && $(CMD_NBCONVERT)'
-test_jupyter: | jupyter
+test_jupyter: jupyter
 	@echo $(SUCCESS_MSG)
 
 
@@ -35,5 +35,5 @@ test_jupyter_baked:
 	    --name $(JOB_NAME) \
 		--preset $(TRAINING_MACHINE_TYPE) \
 		$(CUSTOM_ENV_NAME) \
-		bash -c 'false && $(CMD_PREPARE) && $(CMD_NBCONVERT)'
+		bash -c '$(CMD_PREPARE) && $(CMD_NBCONVERT)'
 	@echo $(SUCCESS_MSG)
