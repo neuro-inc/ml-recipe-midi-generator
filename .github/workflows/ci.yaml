@@ -30,17 +30,17 @@ jobs:
       - name: Install dependencies
         run: |
           python -m venv venv
-          source venv/activate
+          source venv/bin/activate
           pip install --user -r .github/workflows/requirements.txt
       - name: Configure environment
         run: |
-          source venv/activate
+          source venv/bin/activate
 
           neuro config login-with-token $NEURO_COOKIECUTTER_E2E_TOKEN $NEURO_STAGING_URL
           neuro config show
       - name: Build and test image
         run: |
-          source venv/activate
+          source venv/bin/activate
 
           export CUSTOM_ENV_NAME=image:$IMAGE_NAME:$IMAGE_TAG
           make setup __BAKE_SETUP=yes | tee
@@ -53,7 +53,7 @@ jobs:
       - name: Cleanup Jobs
         if: ${{ always() }}
         run: |
-          source venv/activate
+          source venv/bin/activate
 
           export JOBS_LEFT=$(neuro -q ps --tag=$JOBS_TAG)
           [ ! "$JOBS_LEFT" ] || neuro kill $JOBS_LEFT
