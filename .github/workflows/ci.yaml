@@ -30,6 +30,8 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --user -r .github/workflows/requirements.txt
+      - name: Configure environment
+        run: |
           neuro config login-with-token $NEURO_COOKIECUTTER_E2E_TOKEN $NEURO_STAGING_URL
           neuro config show
       - name: Build and Test Image
