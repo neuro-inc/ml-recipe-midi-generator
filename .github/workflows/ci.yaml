@@ -9,6 +9,7 @@ env:
   PROJECT_NAME: ml-recipe-midi-generator
   NEURO_STAGING_URL: ${{ secrets.NEURO_STAGING_URL }}
   NEURO_COOKIECUTTER_E2E_TOKEN: ${{ secrets.NEURO_COOKIECUTTER_E2E_TOKEN }}
+  DOCKER_SERVER: docker.io
 
 jobs:
   test:
@@ -79,17 +80,22 @@ jobs:
           python-version: "3.7"
       - name: Install dependencies
         run: |
+          python -m venv venv
+          source venv/bin/activate
+
           pip install --user -r .github/workflows/requirements.txt
           neuro config login-with-token $NEURO_COOKIECUTTER_E2E_TOKEN $NEURO_STAGING_URL
           neuro config show
       - name: Pull image
         run: |
+          source venv/bin/activate
+
           neuro config docker
           neuro pull image:$IMAGE_NAME:$IMAGE_TAG | tee
           docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$TAG
           docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:latest
       - name: Push image
         run: |
-          docker login --username $DOCKER_HUB_USERNAME --password DOCKER_HUB_PASSWORD
+          docker login $DOCKER_SERVER --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
           docker push $IMAGE_NAME:$TAG
           docker push $IMAGE_NAME:latest
