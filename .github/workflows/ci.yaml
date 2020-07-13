@@ -87,6 +87,10 @@ jobs:
           source venv/bin/activate
 
           pip install --user -r .github/workflows/requirements.txt
+      - name: Configure environment
+        run: |
+          source venv/bin/activate
+
           neuro config login-with-token $NEURO_TOKEN $NEURO_STAGING_URL
           neuro config show
       - name: Pull image
