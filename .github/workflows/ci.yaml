@@ -34,6 +34,7 @@ jobs:
         run: |
           which python
           pip show neuromation
+          echo $PATH
           neuro config login-with-token $NEURO_COOKIECUTTER_E2E_TOKEN $NEURO_STAGING_URL
           neuro config show
       - name: Build and test image
