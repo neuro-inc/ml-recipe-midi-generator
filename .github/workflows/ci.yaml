@@ -32,9 +32,11 @@ jobs:
           pip install --user -r .github/workflows/requirements.txt
       - name: Configure environment
         run: |
+          which python
+          pip show neuromation
           neuro config login-with-token $NEURO_COOKIECUTTER_E2E_TOKEN $NEURO_STAGING_URL
           neuro config show
-      - name: Build and Test Image
+      - name: Build and test image
         run: |
           export CUSTOM_ENV_NAME=image:$IMAGE_REF
           make setup __BAKE_SETUP=yes | tee
