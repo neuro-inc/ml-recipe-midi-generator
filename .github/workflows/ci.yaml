@@ -32,8 +32,7 @@ jobs:
           pip install --user -r .github/workflows/requirements.txt
       - name: Configure environment
         run: |
-          which python
-          pip show neuromation
+          echo ::set-env name=PATH::/home/runner/.local/lib/python3.7/site-packages:$PATH
           echo $PATH
           neuro config login-with-token $NEURO_COOKIECUTTER_E2E_TOKEN $NEURO_STAGING_URL
           neuro config show
