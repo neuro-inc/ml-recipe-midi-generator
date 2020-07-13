@@ -8,7 +8,7 @@ on:
 env:
   PROJECT_NAME: ml-recipe-midi-generator
   NEURO_STAGING_URL: ${{ secrets.NEURO_STAGING_URL }}
-  NEURO_COOKIECUTTER_E2E_TOKEN: ${{ secrets.NEURO_COOKIECUTTER_E2E_TOKEN }}
+  NEURO_TOKEN: ${{ secrets.NEURO_TOKEN }}
 
 jobs:
   test:
@@ -37,7 +37,7 @@ jobs:
         run: |
           source venv/bin/activate
 
-          neuro config login-with-token $NEURO_COOKIECUTTER_E2E_TOKEN $NEURO_STAGING_URL
+          neuro config login-with-token $NEURO_TOKEN $NEURO_STAGING_URL
           neuro config show
       - name: Build and test image
         run: |
@@ -87,7 +87,7 @@ jobs:
           source venv/bin/activate
 
           pip install --user -r .github/workflows/requirements.txt
-          neuro config login-with-token $NEURO_COOKIECUTTER_E2E_TOKEN $NEURO_STAGING_URL
+          neuro config login-with-token $NEURO_TOKEN $NEURO_STAGING_URL
           neuro config show
       - name: Pull image
         run: |
