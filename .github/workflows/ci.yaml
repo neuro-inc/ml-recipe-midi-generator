@@ -1,0 +1,83 @@
+name: Continuous Integration
+
+on:
+  push:
+  release:
+    types: [published]
+
+env:
+  NEURO_STAGING_URL: ${{ secrets.NEURO_STAGING_URL }}
+  NEURO_COOKIECUTTER_E2E_TOKEN: ${{ secrets.NEURO_COOKIECUTTER_E2E_TOKEN }}
+
+jobs:
+  test:
+    name: Build and test image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout commit
+        uses: actions/checkout@v2
+      - name: Setup Environment Variables
+        run: |
+          echo ::set-env name=PROJECT_NAME::ml-recipe-midi-generator
+          echo ::set-env name=PROJECT_PATH_STORAGE::storage:build-$PROJECT_NAME-$GITHUB_RUN_ID
+          echo ::set-env name=IMAGE_NAME::neuromation/$PROJECT_NAME
+          echo ::set-env name=IMAGE_REF::$IMAGE_NAME:build-$GITHUB_RUN_ID
+          echo ::set-env name=JOBS_TAG::build-$GITHUB_RUN_ID
+      - name: Install python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.7"
+      - name: Install dependencies
+        run: |
+          pip install --user -r .github/workflows/requirements.txt
+          neuro config login-with-token $NEURO_COOKIECUTTER_E2E_TOKEN $NEURO_STAGING_URL
+          neuro config show
+      - name: Build and Test Image
+        run: |
+          export CUSTOM_ENV_NAME=image:$IMAGE_REF
+          make setup __BAKE_SETUP=yes | tee
+          export RUN_EXTRA="--tag=$JOBS_TAG"
+
+          make -f test.mk test_jupyter TRAINING_MACHINE_TYPE=cpu-small | tee
+          make -f test.mk test_jupyter TRAINING_MACHINE_TYPE=gpu-small | tee
+          make -f test.mk test_jupyter_baked TRAINING_MACHINE_TYPE=cpu-small | tee
+          make -f test.mk test_jupyter_baked TRAINING_MACHINE_TYPE=gpu-small | tee
+      - name: Cleanup Jobs
+        if: ${{ always() }}
+        run: |
+          export JOBS_LEFT=$(neuro -q ps --tag=$JOBS_TAG)
+          [ ! "$JOBS_LEFT" ] || neuro kill $JOBS_LEFT
+  deploy:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout commit
+        uses: actions/checkout@v2
+      - name: Setup Environment Variables
+        run: |
+          echo ::set-env name=PROJECT_NAME::ml-recipe-midi-generator
+          echo ::set-env name=PROJECT_PATH_STORAGE::storage:build-$PROJECT_NAME-$GITHUB_RUN_ID
+          echo ::set-env name=IMAGE_NAME::neuromation/$PROJECT_NAME
+          echo ::set-env name=IMAGE_REF::$IMAGE_NAME:build-$GITHUB_RUN_ID
+          echo ::set-env name=JOBS_TAG::build-$GITHUB_RUN_ID
+          echo ::set-env name=TAG::${GITHUB_REF#refs/tags/}
+      - name: Install python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.7"
+      - name: Install dependencies
+        run: |
+          pip install --user -r .github/workflows/requirements.txt
+          neuro config login-with-token $NEURO_COOKIECUTTER_E2E_TOKEN $NEURO_STAGING_URL
+          neuro config show
+      - name: Pull image
+        run: |
+          neuro config docker
+          neuro pull image:$IMAGE_REF | tee
+          docker tag $IMAGE_REF $IMAGE_NAME:$TAG
+          docker tag $IMAGE_REF $IMAGE_NAME:latest
+      - name: Push image
+        run: |
+          docker login --username $DOCKER_HUB_USERNAME --password DOCKER_HUB_PASSWORD
+          docker push $IMAGE_NAME:$TAG
+          docker push $IMAGE_NAME:latest
