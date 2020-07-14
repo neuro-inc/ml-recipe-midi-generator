@@ -59,7 +59,7 @@ jobs:
           export JOBS_LEFT=$(neuro -q ps --tag=$JOBS_TAG)
           [ ! "$JOBS_LEFT" ] || neuro kill $JOBS_LEFT
   deploy:
-    name: Run tests
+    name: Deploy image
     runs-on: ubuntu-latest
     needs: test
     if: github.event_name == 'release'
