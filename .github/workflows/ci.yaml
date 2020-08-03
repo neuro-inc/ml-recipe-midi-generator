@@ -4,8 +4,9 @@ on:
   pull_request:
   release:
     types: [published]
-  tags:
-    - .*
+  push:
+    tags:
+      - .*
 
 env:
   PROJECT_NAME: ml-recipe-midi-generator
