@@ -106,4 +106,4 @@ jobs:
         run: |
           docker login $DOCKER_SERVER --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
           docker push $IMAGE_NAME:$TAG
-          docker push $IMAGE_NAME:latest
+          #docker push $IMAGE_NAME:latest
