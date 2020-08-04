@@ -8,7 +8,7 @@ on:
     tags:
       - .*
     branches:
-      - .*
+      - ay/test-release
 
 env:
   PROJECT_NAME: ml-recipe-midi-generator
