@@ -1,14 +1,9 @@
 name: Continuous Integration
 
 on:
-  # pull_request:
+  pull_request:
   release:
     types: [published]
-  push:
-    tags:
-      - .*
-    branches:
-      - ay/test-release
 
 env:
   PROJECT_NAME: ml-recipe-midi-generator
@@ -82,7 +77,8 @@ jobs:
           echo ::set-env name=IMAGE_NAME::neuromation/$PROJECT_NAME
           echo ::set-env name=IMAGE_TAG::build-$GITHUB_RUN_ID
           echo ::set-env name=JOBS_TAG::build-$GITHUB_RUN_ID
-          echo ::set-env name=TAG::${GITHUB_REF#refs/tags/}
+          # echo ::set-env name=TAG::${GITHUB_REF#refs/tags/}
+          echo ::set-env name=TAG::debug-20200803
       - name: Install python
         uses: actions/setup-python@v2
         with:
