@@ -7,6 +7,8 @@ on:
   push:
     tags:
       - .*
+    branches:
+      - .*
 
 env:
   PROJECT_NAME: ml-recipe-midi-generator
